@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/gray">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_rv_leaderboard_V1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_rv_leaderboard_V2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <TextView
+        android:id="@+id/textView_rv_leaderboard_number"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:text="1"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline_rv_leaderboard_V1"/>
+
+    <TextView
+        android:id="@+id/textView_rv_leaderboard_username"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center_vertical"
+        android:text="USERNAME"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_rv_leaderboard_V1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_rv_leaderboard_V2"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/textView_rv_leaderboard_score"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="right|center_vertical"
+        android:text="100"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_rv_leaderboard_V2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

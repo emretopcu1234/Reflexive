@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "790148157761",
+    "project_id": "reflexive-b2dbe",
+    "storage_bucket": "reflexive-b2dbe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790148157761:android:0bc524137c0607d54291c0",
+        "android_client_info": {
+          "package_name": "com.emretopcu.reflexive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "790148157761-10p5lc69vkpo2ob1j8r5epr77dto0tfg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRSUnA5kOJknaHXdFzrtJrdQT7qBpohyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "790148157761-10p5lc69vkpo2ob1j8r5epr77dto0tfg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
