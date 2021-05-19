@@ -2,12 +2,17 @@ package com.emretopcu.reflexive.presenters;
 
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.util.Log;
 
 import com.emretopcu.reflexive.R;
 import com.emretopcu.reflexive.interfaces.Interface_Classic_Game;
+import com.emretopcu.reflexive.interfaces.Interface_General_Game_Activity;
 import com.emretopcu.reflexive.models.Common_Parameters;
+import com.emretopcu.reflexive.models.User_Info;
 import com.emretopcu.reflexive.models.User_Preferences;
+import com.google.firebase.firestore.auth.User;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +34,7 @@ public class Presenter_Classic_Game {
     private final Object lock = new Object();
     private boolean isPlayActive;   // howtoplay'e basılmadan önce oyun playde miydi pauseda mıydı anlamak için
     private boolean isPaused;       // herhangi bir t anında oyun playde mi, pauseda mı anlamak için
+    private boolean isFinished;
     private AtomicInteger remainingTime;
     private AtomicInteger remainingMillis;    // sadece timefield'ını doldurmak için.
     // eğer remainingTime'da tutulsaydı, sensitivity hep 1000'e bölünmesi gereken sayılardan seçilmek zorunda kalırdı.
@@ -45,6 +51,7 @@ public class Presenter_Classic_Game {
     private AtomicBoolean isLastPressedGreen;     // sari rengin nasıl davranacağını anlamak için
     private AtomicBoolean isAnyPressed;   // herhangi bir butona basılmadan sarı renk çıkmaması için
     private int score;
+    private boolean isBest;
 
 
     public Presenter_Classic_Game(Context context, Interface_Classic_Game view) {
@@ -68,6 +75,7 @@ public class Presenter_Classic_Game {
         view.setPause();
         view.setBest(baseBest + User_Preferences.getInstance().getClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL));
         view.setTarget(baseTarget + Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+        view.setScoreColorDefault();
         view.setScore(baseScore + "0");
         view.setTime(Integer.toString(Common_Parameters.TIME_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]));
         if(User_Preferences.getInstance().isClassicFirstEntrance()){
@@ -176,6 +184,7 @@ public class Presenter_Classic_Game {
         }
         buttonFireSequence = new AtomicInteger();
 
+        isFinished = false;
         isLastPressedGreen = new AtomicBoolean();
         isAnyPressed = new AtomicBoolean();
         isAnyPressed.set(false);
@@ -218,16 +227,40 @@ public class Presenter_Classic_Game {
         uiWorkerButton = new CountDownTimer(Common_Parameters.COUNT_DOWN_LENGTH, Common_Parameters.SENSITIVITY_UI) {
             @Override
             public void onTick(long millisUntilFinished) {
-                for(int i=0; i<gameSize; i++){
-                    if(buttonIndicators[i][0].get() != 0){
-                        view.setButtonColor(i,buttonIndicators[i][0].get());
-                    }
-                    if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters.CLASSIC_NUMBER_OF_FIRING_BUTTONS[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]+1))){
-                        if(buttonIndicators[i][0].get() != 0){  // kullanıcı tıkladıysa 0'lanmış olabilir.
-                            buttonIndicators[i][0].set(0);
-                            view.setButtonColor(i,0);
+                if(!isFinished){
+                    for(int i=0; i<gameSize; i++){
+                        if(buttonIndicators[i][0].get() != 0){
+                            view.setButtonColor(i,buttonIndicators[i][0].get());
+                        }
+                        if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters.CLASSIC_NUMBER_OF_FIRING_BUTTONS[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]+1))){
+                            if(buttonIndicators[i][0].get() != 0){  // kullanıcı tıkladıysa 0'lanmış olabilir.
+                                buttonIndicators[i][0].set(0);
+                                view.setButtonColor(i,0);
+                            }
                         }
                     }
+                }
+                else{
+                    if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                        if(User_Preferences.getInstance().getMaxUnlockedClassicLevel() == Common_Parameters.CURRENT_CLASSIC_LEVEL){
+                            User_Preferences.getInstance().setMaxUnlockedClassicLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL+1);
+                        }
+                    }
+                    int lastBestLevel = Integer.parseInt(User_Preferences.getInstance().getClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL));
+                    if(score > lastBestLevel){
+                        isBest = true;
+                        int lastBest = Integer.parseInt(User_Preferences.getInstance().getClassicBest());
+                        int newBest = lastBest + score - lastBestLevel; // classic best'i bu level'daki artış kadar artırılıyor.
+                        User_Preferences.getInstance().setClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL, Integer.toString(score));
+                        User_Preferences.getInstance().setClassicBest(Integer.toString(newBest));
+                        view.openEndGame(true, score);
+                    }
+                    else{
+                        isBest = false;
+                        view.openEndGame(false, score);
+                    }
+                    uiWorkerTime.cancel();
+                    this.cancel();
                 }
             }
 
@@ -253,22 +286,22 @@ public class Presenter_Classic_Game {
                         while(buttonIndicators[candidateCell][0].get() != 0){
                             candidateCell = random.nextInt(gameSize);
                         }
-                        randomColorIndicator = random.nextInt(Common_Parameters.CLASSIC_TOTAL_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL]-1);
+                        randomColorIndicator = random.nextInt(Common_Parameters.CLASSIC_TOTAL_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
                         while(!isYellowAllowed){
                             if(isAnyPressed.get()){
                                 isYellowAllowed = true;
                             }
-                            if(!(randomColorIndicator >= Common_Parameters.CLASSIC_GREEN_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL]-1
-                                && randomColorIndicator < Common_Parameters.CLASSIC_YELLOW_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL]-1)){
+                            if(!(randomColorIndicator >= Common_Parameters.CLASSIC_GREEN_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]
+                                && randomColorIndicator < Common_Parameters.CLASSIC_YELLOW_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1])){
                                 break;
                             }
-                            randomColorIndicator = random.nextInt(Common_Parameters.CLASSIC_TOTAL_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL]-1);
+                            randomColorIndicator = random.nextInt(Common_Parameters.CLASSIC_TOTAL_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
                         }
 
-                        if(randomColorIndicator < Common_Parameters.CLASSIC_GREEN_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL]-1){
+                        if(randomColorIndicator < Common_Parameters.CLASSIC_GREEN_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                             buttonIndicators[candidateCell][0].set(1);
                         }
-                        else if(randomColorIndicator < Common_Parameters.CLASSIC_YELLOW_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL]-1){
+                        else if(randomColorIndicator < Common_Parameters.CLASSIC_YELLOW_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                             buttonIndicators[candidateCell][0].set(2);
                         }
                         else{
@@ -323,11 +356,12 @@ public class Presenter_Classic_Game {
                         }
                     }
                 }
-                uiWorkerTime.cancel();
-                uiWorkerButton.cancel();
-                // TODO arcade kısmında direkt olarak cancel etmek yerine,
+                isFinished = true;
+//                uiWorkerTime.cancel();
+//                uiWorkerButton.cancel();
+                // TODO arcade kısmında direkt olarak true yapmak yerine,
                 // hedefe ulaşılma durumuna göre remainingmillis'i güncelle.
-                // hedefe ulaşılamadıysa cancel et.
+                // hedefe ulaşılamadıysa true yap.
             }
         });
     }
@@ -350,6 +384,9 @@ public class Presenter_Classic_Game {
             score++;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + Integer.toString(score));
+            if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                view.setScoreColorGreen();
+            }
             if(isAudioEnabled){
                 view.playRight(mediaIndexRight);
                 mediaIndexRight++;
@@ -360,10 +397,12 @@ public class Presenter_Classic_Game {
         }
         else if(buttonIndicators[buttonIndex][0].get() == 2){
             buttonIndicators[buttonIndex][0].set(0);
-            // isanypressed kısmına gerek yok. zaten sarı yandıysa önceden true'ya çekilmiş demektir.
             if(isLastPressedGreen.get()){
                 score++;
                 view.setScore(baseScore + Integer.toString(score));
+                if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                    view.setScoreColorGreen();
+                }
                 if(isAudioEnabled){
                     view.playRight(mediaIndexRight);
                     mediaIndexRight++;
@@ -404,4 +443,9 @@ public class Presenter_Classic_Game {
         view.setButtonColor(buttonIndex,0);
     }
 
+    public void onEndGameDismissRequested(){
+        view.dismissEndGame(isBest);
+        view.openClassicMenu();
+    }
 }
+// TODO arcade için yapmaya başla. classic bitti.
