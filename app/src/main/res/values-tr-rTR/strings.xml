@@ -15,6 +15,12 @@
     <string name="arcade_game_target">"HEDEF: "</string>
     <string name="arcade_game_best">"EN İYİ: "</string>
     <string name="survival_game_best">"EN İYİ: "</string>
+    <string name="classic_game_paused_1">"OYUN"</string>
+    <string name="classic_game_paused_2">"DURDURULDU"</string>
+    <string name="arcade_game_paused_1">"OYUN"</string>
+    <string name="arcade_game_paused_2">"DURDURULDU"</string>
+    <string name="survival_game_paused_1">"OYUN"</string>
+    <string name="survival_game_paused_2">"DURDURULDU"</string>
     <string name="leaderboard_classic">KLASİK MOD</string>
     <string name="leaderboard_arcade">ZAMANA KARŞI</string>
     <string name="leaderboard_survival">HAYATTA KALMA</string>

@@ -2,6 +2,6 @@ package com.emretopcu.reflexive.interfaces;
 
 public interface Interface_Fragment {
     void setButtonColor(int buttonIndex, int colorType);
-    void setButtonEnabled(int buttonIndex);
-    void setAllButtonsDisabled();
+    void setButtonsVisible();
+    void setButtonsInvisible();
 }

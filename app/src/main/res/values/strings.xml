@@ -14,6 +14,12 @@
     <string name="arcade_game_target">TARGET:</string>
     <string name="arcade_game_best">BEST:</string>
     <string name="survival_game_best">"BEST: "</string>
+    <string name="classic_game_paused_1">"GAME"</string>
+    <string name="classic_game_paused_2">"PAUSED"</string>
+    <string name="arcade_game_paused_1">"GAME"</string>
+    <string name="arcade_game_paused_2">"PAUSED"</string>
+    <string name="survival_game_paused_1">"GAME"</string>
+    <string name="survival_game_paused_2">"PAUSED"</string>
     <string name="leaderboard_classic">CLASSIC</string>
     <string name="leaderboard_arcade">ARCADE</string>
     <string name="leaderboard_survival">SURVIVAL</string>

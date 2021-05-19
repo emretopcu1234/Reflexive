@@ -25,6 +25,12 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
 
     private MediaPlayer mediaPlayerIntro;
     private MediaPlayer mediaPlayerGame;
+    private MediaPlayer mediaPlayerRight_0;
+    private MediaPlayer mediaPlayerRight_1;
+    private MediaPlayer mediaPlayerRight_2;
+    private MediaPlayer mediaPlayerWrong_0;
+    private MediaPlayer mediaPlayerWrong_1;
+    private MediaPlayer mediaPlayerWrong_2;
     private Button buttonPlay;
     private Button buttonPause;
     private Button buttonQuestion;
@@ -34,6 +40,8 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     private TextView textViewTarget;
     private TextView textViewScore;
     private TextView textViewTime;
+    private TextView textViewPaused_1;
+    private TextView textViewPaused_2;
     private AlertDialog.Builder builderHowToPlay;
     private AlertDialog.Builder builderCountToStart;
     private View viewHowToPlayDialog;
@@ -43,7 +51,7 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
 
     private Interface_Fragment fragment;
     private Presenter_Classic_Game presenter;
-    private boolean isAudioEnabled;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,12 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
 
         mediaPlayerIntro = Activity_Initial.mediaPlayerIntro;
         mediaPlayerGame = Activity_Initial.mediaPlayerGame;
+        mediaPlayerRight_0 = Activity_Initial.mediaPlayerRight_0;
+        mediaPlayerRight_1 = Activity_Initial.mediaPlayerRight_1;
+        mediaPlayerRight_2 = Activity_Initial.mediaPlayerRight_2;
+        mediaPlayerWrong_0 = Activity_Initial.mediaPlayerWrong_0;
+        mediaPlayerWrong_1 = Activity_Initial.mediaPlayerWrong_1;
+        mediaPlayerWrong_2 = Activity_Initial.mediaPlayerWrong_2;
 
         buttonPlay = findViewById(R.id.button_classic_game_play);
         buttonPause = findViewById(R.id.button_classic_game_pause);
@@ -63,6 +77,8 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
         textViewTarget = findViewById(R.id.textView_classic_game_target);
         textViewScore = findViewById(R.id.textView_classic_game_score);
         textViewTime = findViewById(R.id.textView_classic_game_time);
+        textViewPaused_1 = findViewById(R.id.textView_classic_game_paused_1);
+        textViewPaused_2 = findViewById(R.id.textView_classic_game_paused_2);
 
         builderHowToPlay = new AlertDialog.Builder(this);
         viewHowToPlayDialog = this.getLayoutInflater().inflate(R.layout.dialog_how_to_play_classic, null);
@@ -166,7 +182,6 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     public void setAudioEnabled() {
         buttonAudioEnabled.setVisibility(View.VISIBLE);
         buttonAudioDisabled.setVisibility(View.INVISIBLE);
-        isAudioEnabled = true;
         if(!mediaPlayerGame.isPlaying()){
             mediaPlayerGame.start();
         }
@@ -176,7 +191,6 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     public void setAudioDisabled() {
         buttonAudioEnabled.setVisibility(View.INVISIBLE);
         buttonAudioDisabled.setVisibility(View.VISIBLE);
-        isAudioEnabled = false;
         if(mediaPlayerGame.isPlaying()){
             mediaPlayerGame.pause();
         }
@@ -206,12 +220,16 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     public void setPause() {
         buttonPlay.setVisibility(View.INVISIBLE);
         buttonPause.setVisibility(View.VISIBLE);
+        textViewPaused_1.setVisibility(View.INVISIBLE);
+        textViewPaused_2.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void setPlay() {
         buttonPlay.setVisibility(View.VISIBLE);
         buttonPause.setVisibility(View.INVISIBLE);
+        textViewPaused_1.setVisibility(View.VISIBLE);
+        textViewPaused_2.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -250,6 +268,46 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     @Override
     public void setButtonColor(int buttonIndex, int colorType) {
         fragment.setButtonColor(buttonIndex,colorType);
+    }
+
+    @Override
+    public void setButtonsVisible() {
+        fragment.setButtonsVisible();
+    }
+
+    @Override
+    public void setButtonsInvisible() {
+        fragment.setButtonsInvisible();
+    }
+
+    @Override
+    public void playRight(int index) {
+        switch (index) {
+            case 0:
+                mediaPlayerRight_0.start();
+                break;
+            case 1:
+                mediaPlayerRight_1.start();
+                break;
+            case 2:
+                mediaPlayerRight_2.start();
+                break;
+        }
+    }
+
+    @Override
+    public void playWrong(int index) {
+        switch (index) {
+            case 0:
+                mediaPlayerWrong_0.start();
+                break;
+            case 1:
+                mediaPlayerWrong_1.start();
+                break;
+            case 2:
+                mediaPlayerWrong_2.start();
+                break;
+        }
     }
 
     @Override

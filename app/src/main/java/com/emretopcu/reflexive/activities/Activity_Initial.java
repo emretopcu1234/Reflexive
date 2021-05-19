@@ -48,7 +48,12 @@ public class Activity_Initial extends AppCompatActivity {
 
     public static MediaPlayer mediaPlayerIntro;
     public static MediaPlayer mediaPlayerGame;
-
+    public static MediaPlayer mediaPlayerRight_0;
+    public static MediaPlayer mediaPlayerRight_1;
+    public static MediaPlayer mediaPlayerRight_2;
+    public static MediaPlayer mediaPlayerWrong_0;
+    public static MediaPlayer mediaPlayerWrong_1;
+    public static MediaPlayer mediaPlayerWrong_2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,25 @@ public class Activity_Initial extends AppCompatActivity {
 
         mediaPlayerGame = MediaPlayer.create(getApplicationContext(), R.raw.game);
         mediaPlayerGame.setLooping(true);
+
+        mediaPlayerRight_0 = MediaPlayer.create(getApplicationContext(), R.raw.right);
+        mediaPlayerRight_0.setLooping(false);
+
+        mediaPlayerRight_1 = MediaPlayer.create(getApplicationContext(), R.raw.right);
+        mediaPlayerRight_1.setLooping(false);
+
+        mediaPlayerRight_2 = MediaPlayer.create(getApplicationContext(), R.raw.right);
+        mediaPlayerRight_2.setLooping(false);
+
+        mediaPlayerWrong_0 = MediaPlayer.create(getApplicationContext(), R.raw.wrong);
+        mediaPlayerWrong_0.setLooping(false);
+
+        mediaPlayerWrong_1 = MediaPlayer.create(getApplicationContext(), R.raw.wrong);
+        mediaPlayerWrong_1.setLooping(false);
+
+        mediaPlayerWrong_2 = MediaPlayer.create(getApplicationContext(), R.raw.wrong);
+        mediaPlayerWrong_2.setLooping(false);
+
 
 
         if(User_Preferences.getInstance().getUsername().equals("TEMPFORFIRSTENTRANCE")){

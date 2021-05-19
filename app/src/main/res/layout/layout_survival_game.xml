@@ -189,6 +189,36 @@
         app:layout_constraintTop_toTopOf="@id/guideline_survival_game_H3"
         app:layout_constraintBottom_toTopOf="@id/guideline_survival_game_H4"/>
 
+    <TextView
+        android:id="@+id/textView_survival_game_paused_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:text="@string/survival_game_paused_1"
+        app:layout_constraintTop_toTopOf="@id/guideline_survival_game_H3"
+        app:layout_constraintBottom_toTopOf="@id/guideline_survival_game_H4"
+        app:layout_constraintStart_toStartOf="@id/guideline_survival_game_V1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_survival_game_V4"
+        android:layout_marginBottom="45dp"/>
+
+    <TextView
+        android:id="@+id/textView_survival_game_paused_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:text="@string/survival_game_paused_2"
+        app:layout_constraintTop_toTopOf="@id/guideline_survival_game_H3"
+        app:layout_constraintBottom_toTopOf="@id/guideline_survival_game_H4"
+        app:layout_constraintStart_toStartOf="@id/guideline_survival_game_V1"
+        app:layout_constraintEnd_toStartOf="@id/guideline_survival_game_V4"
+        android:layout_marginTop="45dp"/>
+
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView_survival"

@@ -22,6 +22,10 @@ public class Presenter_Classic_Game {
     private final String baseTarget;
     private final String baseScore;
 
+    private boolean isAudioEnabled;
+    private int mediaIndexRight;
+    private int mediaIndexWrong;
+
     private final Object lock = new Object();
     private boolean isPlayActive;   // howtoplay'e basılmadan önce oyun playde miydi pauseda mıydı anlamak için
     private boolean isPaused;       // herhangi bir t anında oyun playde mi, pauseda mı anlamak için
@@ -78,6 +82,7 @@ public class Presenter_Classic_Game {
         isPlayActive = true;
         isPaused = false;
         view.setPause();
+        view.setButtonsVisible();
         synchronized (lock){
             lock.notifyAll();
         }
@@ -87,6 +92,7 @@ public class Presenter_Classic_Game {
         isPlayActive = false;
         isPaused = true;
         view.setPlay();
+        view.setButtonsInvisible();
     }
 
     public void onQuestionClicked(){
@@ -116,11 +122,13 @@ public class Presenter_Classic_Game {
     public void onAudioEnabled() {
         User_Preferences.getInstance().setAudioEnabled(true);
         view.setAudioEnabled();
+        isAudioEnabled = true;
     }
 
     public void onAudioDisabled() {
         User_Preferences.getInstance().setAudioEnabled(false);
         view.setAudioDisabled();
+        isAudioEnabled = false;
     }
 
     private void countToStart() {
@@ -172,6 +180,8 @@ public class Presenter_Classic_Game {
         isAnyPressed = new AtomicBoolean();
         isAnyPressed.set(false);
         score = 0;
+        mediaIndexRight = 0;
+        mediaIndexWrong = 0;
 
         remainingTime = new AtomicInteger();
         remainingMillis = new AtomicInteger();
@@ -233,7 +243,7 @@ public class Presenter_Classic_Game {
             public void run() {
                 buttonFireSequence.set(0);
                 int candidateCell;
-                int randomColorIndicator = -1;   // 0-3 green, 4-5 yellow, 6-9 red
+                int randomColorIndicator;   // 0-3 green, 4-5 yellow, 6-9 red
                 Random random = new Random();
 
                 boolean isYellowAllowed = false;
@@ -340,6 +350,13 @@ public class Presenter_Classic_Game {
             score++;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + Integer.toString(score));
+            if(isAudioEnabled){
+                view.playRight(mediaIndexRight);
+                mediaIndexRight++;
+                if(mediaIndexRight == 3){
+                    mediaIndexRight = 0;
+                }
+            }
         }
         else if(buttonIndicators[buttonIndex][0].get() == 2){
             buttonIndicators[buttonIndex][0].set(0);
@@ -347,11 +364,25 @@ public class Presenter_Classic_Game {
             if(isLastPressedGreen.get()){
                 score++;
                 view.setScore(baseScore + Integer.toString(score));
+                if(isAudioEnabled){
+                    view.playRight(mediaIndexRight);
+                    mediaIndexRight++;
+                    if(mediaIndexRight == 3){
+                        mediaIndexRight = 0;
+                    }
+                }
             }
             else{
                 remainingMillis.set(remainingMillis.get() - 1000);
                 remainingTime.set(remainingTime.get() - 1000);
                 isLastPressedGreen.set(false);
+                if(isAudioEnabled){
+                    view.playWrong(mediaIndexWrong);
+                    mediaIndexWrong++;
+                    if(mediaIndexWrong == 3){
+                        mediaIndexWrong = 0;
+                    }
+                }
             }
         }
         else if(buttonIndicators[buttonIndex][0].get() == 3){
@@ -362,11 +393,15 @@ public class Presenter_Classic_Game {
             remainingMillis.set(remainingMillis.get() - 1000);
             remainingTime.set(remainingTime.get() - 1000);
             isLastPressedGreen.set(false);
+            if(isAudioEnabled){
+                view.playWrong(mediaIndexWrong);
+                mediaIndexWrong++;
+                if(mediaIndexWrong == 3){
+                    mediaIndexWrong = 0;
+                }
+            }
         }
         view.setButtonColor(buttonIndex,0);
     }
-
-    // TODO play pause'da fragmenttaki işlemleri yapmayı unutma.
-    // TODO ses efektlerini hallet.
 
 }

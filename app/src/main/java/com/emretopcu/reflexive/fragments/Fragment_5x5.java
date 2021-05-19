@@ -59,32 +59,30 @@ public class Fragment_5x5 extends Fragment implements Interface_Fragment {
         switch (colorType){
             case 0:
                 buttons[buttonIndex].setBackground(getActivity().getDrawable(R.drawable.background_button_game_5x5_default));
-                buttons[buttonIndex].setEnabled(false);
                 break;
             case 1:
                 buttons[buttonIndex].setBackground(getActivity().getDrawable(R.drawable.background_button_game_5x5_green));
-                buttons[buttonIndex].setEnabled(true);
                 break;
             case 2:
                 buttons[buttonIndex].setBackground(getActivity().getDrawable(R.drawable.background_button_game_5x5_yellow));
-                buttons[buttonIndex].setEnabled(true);
                 break;
             case 3:
                 buttons[buttonIndex].setBackground(getActivity().getDrawable(R.drawable.background_button_game_5x5_red));
-                buttons[buttonIndex].setEnabled(true);
                 break;
         }
     }
 
     @Override
-    public void setButtonEnabled(int buttonIndex) {
-        buttons[buttonIndex].setEnabled(true);
+    public void setButtonsVisible() {
+        for(int i=0; i<buttons.length; i++){
+            buttons[i].setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
-    public void setAllButtonsDisabled() {
+    public void setButtonsInvisible() {
         for(int i=0; i<buttons.length; i++){
-            buttons[i].setEnabled(false);
+            buttons[i].setVisibility(View.INVISIBLE);
         }
     }
 }

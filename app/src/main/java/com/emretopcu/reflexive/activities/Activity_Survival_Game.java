@@ -32,6 +32,8 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
     private Button buttonAudioDisabled;
     private TextView textViewBest;
     private TextView textViewScore;
+    private TextView textViewPaused_1;
+    private TextView textViewPaused_2;
     private Button[] buttonChances;
     private AlertDialog.Builder builderHowToPlay;
     private AlertDialog.Builder builderCountToStart;
@@ -61,6 +63,8 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
 
         textViewBest = findViewById(R.id.textView_survival_game_best);
         textViewScore = findViewById(R.id.textView_survival_game_score);
+        textViewPaused_1 = findViewById(R.id.textView_survival_game_paused_1);
+        textViewPaused_2 = findViewById(R.id.textView_survival_game_paused_2);
 
         buttonChances = new Button[Common_Parameters.NUMBER_OF_SURVIVAL_CHANCES];
         buttonChances[0] = findViewById(R.id.button_survival_game_life0);
@@ -196,12 +200,16 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
     public void setPause() {
         buttonPlay.setVisibility(View.INVISIBLE);
         buttonPause.setVisibility(View.VISIBLE);
+        textViewPaused_1.setVisibility(View.INVISIBLE);
+        textViewPaused_2.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void setPlay() {
         buttonPlay.setVisibility(View.VISIBLE);
         buttonPause.setVisibility(View.INVISIBLE);
+        textViewPaused_1.setVisibility(View.VISIBLE);
+        textViewPaused_2.setVisibility(View.VISIBLE);
     }
 
     @Override

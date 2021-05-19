@@ -16,5 +16,9 @@ public interface Interface_Classic_Game {
     void editCountToStart(int second);
     void dismissCountToStart();
     void setButtonColor(int buttonIndex, int colorType);
+    void setButtonsVisible();
+    void setButtonsInvisible();
+    void playRight(int index);
+    void playWrong(int index);
     void openClassicMenu();
 }

@@ -33,6 +33,8 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     private TextView textViewTarget;
     private TextView textViewScore;
     private TextView textViewTime;
+    private TextView textViewPaused_1;
+    private TextView textViewPaused_2;
     private AlertDialog.Builder builderHowToPlay;
     private AlertDialog.Builder builderCountToStart;
     private View viewHowToPlayDialog;
@@ -63,6 +65,8 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
         textViewTarget = findViewById(R.id.textView_arcade_game_target);
         textViewScore = findViewById(R.id.textView_arcade_game_score);
         textViewTime = findViewById(R.id.textView_arcade_game_time);
+        textViewPaused_1 = findViewById(R.id.textView_arcade_game_paused_1);
+        textViewPaused_2 = findViewById(R.id.textView_arcade_game_paused_2);
 
         builderHowToPlay = new AlertDialog.Builder(this);
         viewHowToPlayDialog = this.getLayoutInflater().inflate(R.layout.dialog_how_to_play_arcade, null);
@@ -195,12 +199,16 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     public void setPause() {
         buttonPlay.setVisibility(View.INVISIBLE);
         buttonPause.setVisibility(View.VISIBLE);
+        textViewPaused_1.setVisibility(View.INVISIBLE);
+        textViewPaused_2.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void setPlay() {
         buttonPlay.setVisibility(View.VISIBLE);
         buttonPause.setVisibility(View.INVISIBLE);
+        textViewPaused_1.setVisibility(View.VISIBLE);
+        textViewPaused_2.setVisibility(View.VISIBLE);
     }
 
     @Override
