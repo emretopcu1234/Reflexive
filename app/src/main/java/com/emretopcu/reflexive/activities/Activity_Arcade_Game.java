@@ -186,6 +186,16 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     }
 
     @Override
+    public void setScoreColorDefault() {
+        textViewScore.setTextColor(-1979711488);   // getcurrenttextcolor yapıp bu sayıyı buldum.
+    }
+
+    @Override
+    public void setScoreColorGreen() {
+        textViewScore.setTextColor(getResources().getColor(R.color.green));
+    }
+
+    @Override
     public void setScore(String score) {
         textViewScore.setText(score);
     }

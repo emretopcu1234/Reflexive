@@ -7,6 +7,8 @@ public interface Interface_Classic_Game {
     void setBest(String best);
     void setTarget(String target);
     void setScore(String score);
+    void setScoreColorDefault();
+    void setScoreColorGreen();
     void setTime(String time);
     void setPause();
     void setPlay();
@@ -20,5 +22,7 @@ public interface Interface_Classic_Game {
     void setButtonsInvisible();
     void playRight(int index);
     void playWrong(int index);
+    void openEndGame(boolean isBest, int score);
+    void dismissEndGame(boolean isBest);
     void openClassicMenu();
 }

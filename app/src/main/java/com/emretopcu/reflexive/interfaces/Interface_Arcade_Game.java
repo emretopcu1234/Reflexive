@@ -7,6 +7,8 @@ public interface Interface_Arcade_Game {
     void setBest(String best);
     void setTarget(String target);
     void setScore(String score);
+    void setScoreColorDefault();
+    void setScoreColorGreen();
     void setTime(String time);
     void setPause();
     void setPlay();

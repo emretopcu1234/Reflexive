@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -44,10 +45,16 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     private TextView textViewPaused_2;
     private AlertDialog.Builder builderHowToPlay;
     private AlertDialog.Builder builderCountToStart;
+    private AlertDialog.Builder builderEndGameWithBest;
+    private AlertDialog.Builder builderEndGameWithoutBest;
     private View viewHowToPlayDialog;
     private View viewCountToStartDialog;
+    private View viewEndGameWithBest;
+    private View viewEndGameWithoutBest;
     private AlertDialog alertDialogHowToPlay;
     private AlertDialog alertDialogCountToStart;
+    private AlertDialog alertDialogEndGameWithBest;
+    private AlertDialog alertDialogEndGameWithoutBest;
 
     private Interface_Fragment fragment;
     private Presenter_Classic_Game presenter;
@@ -92,6 +99,18 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
         alertDialogCountToStart = builderCountToStart.create();
         alertDialogCountToStart.setCancelable(false);
         alertDialogCountToStart.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        builderEndGameWithBest = new AlertDialog.Builder(this);
+        viewEndGameWithBest = this.getLayoutInflater().inflate(R.layout.dialog_end_game_with_best, null);
+        builderEndGameWithBest.setView(viewEndGameWithBest);
+        alertDialogEndGameWithBest = builderEndGameWithBest.create();
+        alertDialogEndGameWithBest.setCancelable(false);
+
+        builderEndGameWithoutBest = new AlertDialog.Builder(this);
+        viewEndGameWithoutBest = this.getLayoutInflater().inflate(R.layout.dialog_end_game_without_best, null);
+        builderEndGameWithoutBest.setView(viewEndGameWithoutBest);
+        alertDialogEndGameWithoutBest = builderEndGameWithoutBest.create();
+        alertDialogEndGameWithoutBest.setCancelable(false);
 
         presenter = new Presenter_Classic_Game(getApplicationContext(), this);
 
@@ -207,6 +226,18 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     }
 
     @Override
+    public void setScoreColorDefault() {
+        textViewScore.setTextColor(-1979711488);   // getcurrenttextcolor yapıp bu sayıyı buldum.
+    }
+
+    @Override
+    public void setScoreColorGreen() {
+        if(textViewScore.getCurrentTextColor() != getResources().getColor(R.color.green)){
+            textViewScore.setTextColor(getResources().getColor(R.color.green));
+        }
+    }
+
+    @Override
     public void setScore(String score) {
         textViewScore.setText(score);
     }
@@ -307,6 +338,44 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
             case 2:
                 mediaPlayerWrong_2.start();
                 break;
+        }
+    }
+
+    @Override
+    public void openEndGame(boolean isBest, int score) {
+        if(isBest){
+            TextView textViewScoreValue = viewEndGameWithBest.findViewById(R.id.textView_end_game_with_best_score_value);
+            textViewScoreValue.setText(Integer.toString(score));
+            Button buttonOk = viewEndGameWithBest.findViewById(R.id.button_end_game_with_best_ok);
+            buttonOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.onEndGameDismissRequested();
+                }
+            });
+            alertDialogEndGameWithBest.show();
+        }
+        else{
+            TextView textViewScoreValue = viewEndGameWithoutBest.findViewById(R.id.textView_end_game_without_best_score_value);
+            textViewScoreValue.setText(Integer.toString(score));
+            Button buttonOk = viewEndGameWithoutBest.findViewById(R.id.button_end_game_without_best_ok);
+            buttonOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.onEndGameDismissRequested();
+                }
+            });
+            alertDialogEndGameWithoutBest.show();
+        }
+    }
+
+    @Override
+    public void dismissEndGame(boolean isBest) {
+        if(isBest){
+            alertDialogEndGameWithBest.dismiss();
+        }
+        else{
+            alertDialogEndGameWithoutBest.dismiss();
         }
     }
 

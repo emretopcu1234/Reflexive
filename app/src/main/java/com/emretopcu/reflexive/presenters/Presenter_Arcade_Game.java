@@ -37,6 +37,7 @@ public class Presenter_Arcade_Game {
         view.setPause();
         view.setBest(baseBest + User_Preferences.getInstance().getArcadeBest());
         view.setTarget(baseTarget + Integer.toString(Common_Parameters.TARGET_ARCADE[0]));  // oyunda ilerlendikçe index artacak.
+        view.setScoreColorDefault();
         view.setScore(baseScore + "0");
         view.setTime(Integer.toString(Common_Parameters.TIME_ARCADE[0]));   // oyunda ilerlendikçe index artacak.
         if(User_Preferences.getInstance().isArcadeFirstEntrance()){
