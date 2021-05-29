@@ -2,17 +2,12 @@ package com.emretopcu.reflexive.presenters;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.util.Log;
 
 import com.emretopcu.reflexive.R;
 import com.emretopcu.reflexive.interfaces.Interface_Classic_Game;
-import com.emretopcu.reflexive.interfaces.Interface_General_Game_Activity;
 import com.emretopcu.reflexive.models.Common_Parameters;
-import com.emretopcu.reflexive.models.User_Info;
 import com.emretopcu.reflexive.models.User_Preferences;
-import com.google.firebase.firestore.auth.User;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,7 +57,7 @@ public class Presenter_Classic_Game {
     }
 
     public void onActivityResumed(){
-        view.setFragment(Common_Parameters.FRAGMENT_TYPE_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+        view.setFragment(Common_Parameters.CLASSIC_FRAGMENT_TYPE[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
         if(User_Preferences.getInstance().isAudioEnabled()){
             onAudioEnabled();
         }
@@ -73,10 +68,10 @@ public class Presenter_Classic_Game {
         isPaused = false;
         view.setPause();
         view.setBest(baseBest + User_Preferences.getInstance().getClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL));
-        view.setTarget(baseTarget + Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+        view.setTarget(baseTarget + Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
         view.setScoreColorDefault();
         view.setScore(baseScore + "0");
-        view.setTime(Integer.toString(Common_Parameters.TIME_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]));
+        view.setTime(Integer.toString(Common_Parameters.CLASSIC_TIME[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]));
         if(User_Preferences.getInstance().isClassicFirstEntrance()){
             view.openHowToPlay();
         }
@@ -163,7 +158,7 @@ public class Presenter_Classic_Game {
     }
 
     private void startGame(){
-        switch (Common_Parameters.FRAGMENT_TYPE_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+        switch (Common_Parameters.CLASSIC_FRAGMENT_TYPE[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
             case 0:
                 gameSize = 16;
                 break;
@@ -193,8 +188,8 @@ public class Presenter_Classic_Game {
 
         remainingTime = new AtomicInteger();
         remainingMillis = new AtomicInteger();
-        remainingTime.set(Common_Parameters.TIME_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1] * 1000);   // ms
-        remainingMillis.set(Common_Parameters.TIME_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1] * 1000); // ms
+        remainingTime.set(Common_Parameters.CLASSIC_TIME[Common_Parameters.CURRENT_CLASSIC_LEVEL-1] * 1000);   // ms
+        remainingMillis.set(Common_Parameters.CLASSIC_TIME[Common_Parameters.CURRENT_CLASSIC_LEVEL-1] * 1000); // ms
 
         // normal timer kullanamıyoruz, çünkü farklı bir thread'e geçiyor,
         // farklı thread'den de ui componentlarına erişemiyoruz.
@@ -240,7 +235,7 @@ public class Presenter_Classic_Game {
                     }
                 }
                 else{
-                    if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                    if(score >= Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                         if(User_Preferences.getInstance().getMaxUnlockedClassicLevel() == Common_Parameters.CURRENT_CLASSIC_LEVEL){
                             User_Preferences.getInstance().setMaxUnlockedClassicLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL+1);
                         }
@@ -379,7 +374,7 @@ public class Presenter_Classic_Game {
             score++;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + score);
-            if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+            if(score >= Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                 view.setScoreColorGreen();
             }
             if(isAudioEnabled){
@@ -395,7 +390,7 @@ public class Presenter_Classic_Game {
             if(isLastPressedGreen.get()){
                 score++;
                 view.setScore(baseScore + score);
-                if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                if(score >= Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                     view.setScoreColorGreen();
                 }
                 if(isAudioEnabled){

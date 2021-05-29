@@ -62,7 +62,7 @@ public class Presenter_Arcade_Game {
     }
 
     public void onActivityResumed(){
-        view.setFragment(Common_Parameters.FRAGMENT_TYPE_ARCADE[0]);    // oyunda ilerlendikçe index artacak.
+        view.setFragment(Common_Parameters.ARCADE_FRAGMENT_TYPE[0]);    // oyunda ilerlendikçe index artacak.
         if(User_Preferences.getInstance().isAudioEnabled()){
             onAudioEnabled();
         }
@@ -71,7 +71,7 @@ public class Presenter_Arcade_Game {
         }
         gameDifficultyIndex = 0;    // TODO oyun arkaplana alınıp yeniden gelirse vb bu duruma bir çözüm gerekebilir.
         currentFragment = new AtomicInteger();
-        currentFragment.set(Common_Parameters.FRAGMENT_TYPE_ARCADE[gameDifficultyIndex]);
+        currentFragment.set(Common_Parameters.ARCADE_FRAGMENT_TYPE[gameDifficultyIndex]);
         isLastLevelStarted = false;
         isLastSecondsVisible = false;
         isPlayActive = true;
@@ -79,10 +79,10 @@ public class Presenter_Arcade_Game {
         view.setPause();
         view.setLastSecondsVisible(false);
         view.setBest(baseBest + User_Preferences.getInstance().getArcadeBest());
-        view.setTarget(baseTarget + Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]);
+        view.setTarget(baseTarget + Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]);
         view.setScoreColorDefault();
         view.setScore(baseScore + "0");
-        view.setTime(Integer.toString(Common_Parameters.TIME_ARCADE[gameDifficultyIndex]));
+        view.setTime(Integer.toString(Common_Parameters.ARCADE_TIME[gameDifficultyIndex]));
         if(User_Preferences.getInstance().isArcadeFirstEntrance()){
             view.openHowToPlay();
         }
@@ -168,7 +168,7 @@ public class Presenter_Arcade_Game {
     }
 
     private void startGame(){
-        switch (Common_Parameters.FRAGMENT_TYPE_ARCADE[gameDifficultyIndex]){
+        switch (Common_Parameters.ARCADE_FRAGMENT_TYPE[gameDifficultyIndex]){
             case 0:
                 gameSize = 16;
                 break;
@@ -198,8 +198,8 @@ public class Presenter_Arcade_Game {
 
         remainingTime = new AtomicInteger();
         remainingMillis = new AtomicInteger();
-        remainingTime.set(Common_Parameters.TIME_ARCADE[gameDifficultyIndex] * 1000);   // ms
-        remainingMillis.set(Common_Parameters.TIME_ARCADE[gameDifficultyIndex] * 1000); // ms
+        remainingTime.set(Common_Parameters.ARCADE_TIME[gameDifficultyIndex] * 1000);   // ms
+        remainingMillis.set(Common_Parameters.ARCADE_TIME[gameDifficultyIndex] * 1000); // ms
 
         uiWorkerLastSecondsField = new CountDownTimer(Common_Parameters.COUNT_DOWN_LENGTH,500){
             @Override
@@ -235,8 +235,8 @@ public class Presenter_Arcade_Game {
             public void onTick(long millisUntilFinished) {
                 if(!isPaused){
                     view.setTime(Integer.toString(remainingMillis.get()/1000));
-                    if(currentFragment.get() != Common_Parameters.FRAGMENT_TYPE_ARCADE[gameDifficultyIndex]){
-                        currentFragment.set(Common_Parameters.FRAGMENT_TYPE_ARCADE[gameDifficultyIndex]);
+                    if(currentFragment.get() != Common_Parameters.ARCADE_FRAGMENT_TYPE[gameDifficultyIndex]){
+                        currentFragment.set(Common_Parameters.ARCADE_FRAGMENT_TYPE[gameDifficultyIndex]);
                         switch (currentFragment.get()){
                             case 0:
                                 gameSize = 16;
@@ -258,8 +258,8 @@ public class Presenter_Arcade_Game {
                         view.setFragment(currentFragment.get());
                     }
                     if(gameDifficultyIndex != Common_Parameters.NUMBER_OF_ARCADE_LEVELS-1){
-                        view.setTarget(baseTarget + Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]);
-                        if(score >= Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]){
+                        view.setTarget(baseTarget + Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]);
+                        if(score >= Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]){
                             view.setScoreColorGreen();
                         }
                         else{
@@ -283,8 +283,8 @@ public class Presenter_Arcade_Game {
                 // zaten oyun bittiğinde her türlü burasi stop edilecek.
                 if(!isPaused) {
                     view.setTime(Integer.toString(remainingMillis.get()/1000));
-                    if(currentFragment.get() != Common_Parameters.FRAGMENT_TYPE_ARCADE[gameDifficultyIndex]){
-                        currentFragment.set(Common_Parameters.FRAGMENT_TYPE_ARCADE[gameDifficultyIndex]);
+                    if(currentFragment.get() != Common_Parameters.ARCADE_FRAGMENT_TYPE[gameDifficultyIndex]){
+                        currentFragment.set(Common_Parameters.ARCADE_FRAGMENT_TYPE[gameDifficultyIndex]);
                         switch (currentFragment.get()){
                             case 0:
                                 gameSize = 16;
@@ -306,8 +306,8 @@ public class Presenter_Arcade_Game {
                         view.setFragment(currentFragment.get());
                     }
                     if(gameDifficultyIndex != Common_Parameters.NUMBER_OF_ARCADE_LEVELS-1){
-                        view.setTarget(baseTarget + Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]);
-                        if(score >= Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]){
+                        view.setTarget(baseTarget + Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]);
+                        if(score >= Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]){
                             view.setScoreColorGreen();
                         }
                         else{
@@ -431,7 +431,7 @@ public class Presenter_Arcade_Game {
         serviceTimeField.execute(new Runnable() {
             @Override
             public void run() {
-                for(int i=0; i<1000; i++){  // TODO i'nin boyutu commonparameters'daki arcade kısmının boyutuyla eşit olacak. o boyuta ulaşılırsa oyun bitecek. (boyutu okumak yerine bir değişken tanımlanacak.)
+                for(int i=0; i<Common_Parameters.NUMBER_OF_ARCADE_LEVELS; i++){
                     if(isFinished){
                         break;
                     }
@@ -460,15 +460,15 @@ public class Presenter_Arcade_Game {
                         remainingMillis.set(-1);
                     }
                     else{
-                        if(score < Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]){
+                        if(score < Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]){
                             isFinished = true;
                             remainingTime.set(-1);
                             remainingMillis.set(-1);
                         }
                         else{
                             gameDifficultyIndex++;
-                            remainingTime.set(Common_Parameters.TIME_ARCADE[gameDifficultyIndex] * 1000);
-                            remainingMillis.set(Common_Parameters.TIME_ARCADE[gameDifficultyIndex] * 1000);
+                            remainingTime.set(Common_Parameters.ARCADE_TIME[gameDifficultyIndex] * 1000);
+                            remainingMillis.set(Common_Parameters.ARCADE_TIME[gameDifficultyIndex] * 1000);
                         }
                     }
                 }
@@ -494,7 +494,7 @@ public class Presenter_Arcade_Game {
             score++;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + score);
-            if(score >= Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]){
+            if(score >= Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]){
                 view.setScoreColorGreen();
             }
             if(isAudioEnabled){
@@ -510,7 +510,7 @@ public class Presenter_Arcade_Game {
             if(isLastPressedGreen.get()){
                 score++;
                 view.setScore(baseScore + score);
-                if(score >= Common_Parameters.TARGET_ARCADE[gameDifficultyIndex]){
+                if(score >= Common_Parameters.ARCADE_TARGET[gameDifficultyIndex]){
                     view.setScoreColorGreen();
                 }
                 if(isAudioEnabled){
@@ -557,6 +557,4 @@ public class Presenter_Arcade_Game {
         view.dismissEndGame(isBest);
         view.openMain();
     }
-
 }
-

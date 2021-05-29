@@ -14,4 +14,12 @@ public interface Interface_Survival_Game {
     void openCountToStart();
     void editCountToStart(int second);
     void dismissCountToStart();
+    void setButtonColor(int buttonIndex, int colorType);
+    void setButtonsVisible();
+    void setButtonsInvisible();
+    void playRight(int index);
+    void playWrong(int index);
+    void openEndGame(boolean isBest, int score);
+    void dismissEndGame(boolean isBest);
+    void openMain();
 }
