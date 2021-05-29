@@ -12,6 +12,7 @@
     <string name="survival_game_score">"SKOR: "</string>
     <string name="classic_game_target">"HEDEF: "</string>
     <string name="classic_game_best">"EN İYİ: "</string>
+    <string name="arcade_game_last_seconds">SON SANİYELER</string>
     <string name="arcade_game_target">"HEDEF: "</string>
     <string name="arcade_game_best">"EN İYİ: "</string>
     <string name="survival_game_best">"EN İYİ: "</string>

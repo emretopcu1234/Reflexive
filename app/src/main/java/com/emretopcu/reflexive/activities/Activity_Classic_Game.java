@@ -59,7 +59,6 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     private Interface_Fragment fragment;
     private Presenter_Classic_Game presenter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,14 +185,6 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_classic_game, (Fragment) fragment, null)
                     .commit();
-//            View viewTemp = View.inflate(getApplicationContext(), R.layout.fragment_6x6, null);
-//            buttons = new Button[36];
-//            for(int i=0; i<buttons.length; i++){
-//                String buttonID = "button_fragment_6x6_" + i;
-//                int resID = getResources().getIdentifier(buttonID, "id", getPackageName());
-//                buttons[i] = ((Button) viewTemp.findViewById(resID));
-//                buttons[i].setEnabled(false);
-//            }
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -24,11 +25,18 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
 
     private MediaPlayer mediaPlayerIntro;
     private MediaPlayer mediaPlayerGame;
+    private MediaPlayer mediaPlayerRight_0;
+    private MediaPlayer mediaPlayerRight_1;
+    private MediaPlayer mediaPlayerRight_2;
+    private MediaPlayer mediaPlayerWrong_0;
+    private MediaPlayer mediaPlayerWrong_1;
+    private MediaPlayer mediaPlayerWrong_2;
     private Button buttonPlay;
     private Button buttonPause;
     private Button buttonQuestion;
     private Button buttonAudioEnabled;
     private Button buttonAudioDisabled;
+    private TextView textViewLastSeconds;
     private TextView textViewBest;
     private TextView textViewTarget;
     private TextView textViewScore;
@@ -37,15 +45,19 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     private TextView textViewPaused_2;
     private AlertDialog.Builder builderHowToPlay;
     private AlertDialog.Builder builderCountToStart;
+    private AlertDialog.Builder builderEndGameWithBest;
+    private AlertDialog.Builder builderEndGameWithoutBest;
     private View viewHowToPlayDialog;
     private View viewCountToStartDialog;
+    private View viewEndGameWithBest;
+    private View viewEndGameWithoutBest;
     private AlertDialog alertDialogHowToPlay;
     private AlertDialog alertDialogCountToStart;
+    private AlertDialog alertDialogEndGameWithBest;
+    private AlertDialog alertDialogEndGameWithoutBest;
 
     private Interface_Fragment fragment;
     private Presenter_Arcade_Game presenter;
-
-    private boolean isAudioEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +66,12 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
 
         mediaPlayerIntro = Activity_Initial.mediaPlayerIntro;
         mediaPlayerGame = Activity_Initial.mediaPlayerGame;
+        mediaPlayerRight_0 = Activity_Initial.mediaPlayerRight_0;
+        mediaPlayerRight_1 = Activity_Initial.mediaPlayerRight_1;
+        mediaPlayerRight_2 = Activity_Initial.mediaPlayerRight_2;
+        mediaPlayerWrong_0 = Activity_Initial.mediaPlayerWrong_0;
+        mediaPlayerWrong_1 = Activity_Initial.mediaPlayerWrong_1;
+        mediaPlayerWrong_2 = Activity_Initial.mediaPlayerWrong_2;
 
         buttonPlay = findViewById(R.id.button_arcade_game_play);
         buttonPause = findViewById(R.id.button_arcade_game_pause);
@@ -61,6 +79,7 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
         buttonAudioEnabled = findViewById(R.id.button_arcade_game_audio_on);
         buttonAudioDisabled = findViewById(R.id.button_arcade_game_audio_off);
 
+        textViewLastSeconds = findViewById(R.id.textView_arcade_game_last_seconds);
         textViewBest = findViewById(R.id.textView_arcade_game_best);
         textViewTarget = findViewById(R.id.textView_arcade_game_target);
         textViewScore = findViewById(R.id.textView_arcade_game_score);
@@ -80,6 +99,18 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
         alertDialogCountToStart = builderCountToStart.create();
         alertDialogCountToStart.setCancelable(false);
         alertDialogCountToStart.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        builderEndGameWithBest = new AlertDialog.Builder(this);
+        viewEndGameWithBest = this.getLayoutInflater().inflate(R.layout.dialog_end_game_with_best, null);
+        builderEndGameWithBest.setView(viewEndGameWithBest);
+        alertDialogEndGameWithBest = builderEndGameWithBest.create();
+        alertDialogEndGameWithBest.setCancelable(false);
+
+        builderEndGameWithoutBest = new AlertDialog.Builder(this);
+        viewEndGameWithoutBest = this.getLayoutInflater().inflate(R.layout.dialog_end_game_without_best, null);
+        builderEndGameWithoutBest.setView(viewEndGameWithoutBest);
+        alertDialogEndGameWithoutBest = builderEndGameWithoutBest.create();
+        alertDialogEndGameWithoutBest.setCancelable(false);
 
         presenter = new Presenter_Arcade_Game(getApplicationContext(), this);
 
@@ -128,7 +159,10 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
         presenter.onActivityResumed();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        presenter.onBackPressed();
+    }
 
     @Override
     public void setFragment(int fragmentType) {
@@ -159,7 +193,6 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     public void setAudioEnabled() {
         buttonAudioEnabled.setVisibility(View.VISIBLE);
         buttonAudioDisabled.setVisibility(View.INVISIBLE);
-        isAudioEnabled = true;
         if(!mediaPlayerGame.isPlaying()){
             mediaPlayerGame.start();
         }
@@ -169,9 +202,18 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     public void setAudioDisabled() {
         buttonAudioEnabled.setVisibility(View.INVISIBLE);
         buttonAudioDisabled.setVisibility(View.VISIBLE);
-        isAudioEnabled = false;
         if(mediaPlayerGame.isPlaying()){
             mediaPlayerGame.pause();
+        }
+    }
+
+    @Override
+    public void setLastSecondsVisible(boolean isVisible) {
+        if(isVisible){
+            textViewLastSeconds.setVisibility(View.VISIBLE);
+        }
+        else{
+            textViewLastSeconds.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -192,7 +234,9 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
 
     @Override
     public void setScoreColorGreen() {
-        textViewScore.setTextColor(getResources().getColor(R.color.green));
+        if(textViewScore.getCurrentTextColor() != getResources().getColor(R.color.green)){
+            textViewScore.setTextColor(getResources().getColor(R.color.green));
+        }
     }
 
     @Override
@@ -255,7 +299,96 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     }
 
     @Override
-    public void onButtonClicked(int buttonIndex) {
+    public void setButtonColor(int buttonIndex, int colorType) {
+        fragment.setButtonColor(buttonIndex,colorType);
+    }
 
+    @Override
+    public void setButtonsVisible() {
+        fragment.setButtonsVisible();
+    }
+
+    @Override
+    public void setButtonsInvisible() {
+        fragment.setButtonsInvisible();
+    }
+
+    @Override
+    public void playRight(int index) {
+        switch (index) {
+            case 0:
+                mediaPlayerRight_0.start();
+                break;
+            case 1:
+                mediaPlayerRight_1.start();
+                break;
+            case 2:
+                mediaPlayerRight_2.start();
+                break;
+        }
+    }
+
+    @Override
+    public void playWrong(int index) {
+        switch (index) {
+            case 0:
+                mediaPlayerWrong_0.start();
+                break;
+            case 1:
+                mediaPlayerWrong_1.start();
+                break;
+            case 2:
+                mediaPlayerWrong_2.start();
+                break;
+        }
+    }
+
+    @Override
+    public void openEndGame(boolean isBest, int score) {
+        if(isBest){
+            TextView textViewScoreValue = viewEndGameWithBest.findViewById(R.id.textView_end_game_with_best_score_value);
+            textViewScoreValue.setText(Integer.toString(score));
+            Button buttonOk = viewEndGameWithBest.findViewById(R.id.button_end_game_with_best_ok);
+            buttonOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.onEndGameDismissRequested();
+                }
+            });
+            alertDialogEndGameWithBest.show();
+        }
+        else{
+            TextView textViewScoreValue = viewEndGameWithoutBest.findViewById(R.id.textView_end_game_without_best_score_value);
+            textViewScoreValue.setText(Integer.toString(score));
+            Button buttonOk = viewEndGameWithoutBest.findViewById(R.id.button_end_game_without_best_ok);
+            buttonOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.onEndGameDismissRequested();
+                }
+            });
+            alertDialogEndGameWithoutBest.show();
+        }
+    }
+
+    @Override
+    public void dismissEndGame(boolean isBest) {
+        if(isBest){
+            alertDialogEndGameWithBest.dismiss();
+        }
+        else{
+            alertDialogEndGameWithoutBest.dismiss();
+        }
+    }
+
+    @Override
+    public void openMain() {
+        Intent i = new Intent(getApplicationContext(), Activity_Main.class);
+        startActivity(i);
+    }
+
+    @Override
+    public void onButtonClicked(int buttonIndex) {
+        presenter.onButtonClicked(buttonIndex);
     }
 }

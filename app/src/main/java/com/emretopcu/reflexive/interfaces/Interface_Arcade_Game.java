@@ -4,6 +4,7 @@ public interface Interface_Arcade_Game {
     void setFragment(int fragmentType);
     void setAudioEnabled();
     void setAudioDisabled();
+    void setLastSecondsVisible(boolean isVisible);
     void setBest(String best);
     void setTarget(String target);
     void setScore(String score);
@@ -17,5 +18,13 @@ public interface Interface_Arcade_Game {
     void openCountToStart();
     void editCountToStart(int second);
     void dismissCountToStart();
+    void setButtonColor(int buttonIndex, int colorType);
+    void setButtonsVisible();
+    void setButtonsInvisible();
+    void playRight(int index);
+    void playWrong(int index);
+    void openEndGame(boolean isBest, int score);
+    void dismissEndGame(boolean isBest);
+    void openMain();
 }
 

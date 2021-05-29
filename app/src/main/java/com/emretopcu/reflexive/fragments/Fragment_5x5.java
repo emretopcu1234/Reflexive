@@ -41,7 +41,7 @@ public class Fragment_5x5 extends Fragment implements Interface_Fragment {
                 @Override
                 public void onClick(View v) {
                     for(int i=0; i<buttons.length; i++){
-                        String buttonID = "button_fragment_4x4_" + i;
+                        String buttonID = "button_fragment_5x5_" + i;
                         int resID = getResources().getIdentifier(buttonID, "id", getActivity().getPackageName());
                         if(v.getId() == resID){
                             activity.onButtonClicked(i);

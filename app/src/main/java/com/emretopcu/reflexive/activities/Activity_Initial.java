@@ -45,6 +45,8 @@ public class Activity_Initial extends AppCompatActivity {
 
     // TODO her class'taki sarı renkli uyarıları incele.
 
+    // TODO oyunda kişi kendi best'ini geçerse firebase'e gönder. duruma göre leaderboard'u güncelle, user_info, user_preferences vb hallet. (presenter'larda yapılacak.)
+
 
     public static MediaPlayer mediaPlayerIntro;
     public static MediaPlayer mediaPlayerGame;

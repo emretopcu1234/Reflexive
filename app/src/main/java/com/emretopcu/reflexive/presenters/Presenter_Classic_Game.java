@@ -53,7 +53,6 @@ public class Presenter_Classic_Game {
     private int score;
     private boolean isBest;
 
-
     public Presenter_Classic_Game(Context context, Interface_Classic_Game view) {
         this.context = context;
         this.view = view;
@@ -253,12 +252,11 @@ public class Presenter_Classic_Game {
                         int newBest = lastBest + score - lastBestLevel; // classic best'i bu level'daki artış kadar artırılıyor.
                         User_Preferences.getInstance().setClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL, Integer.toString(score));
                         User_Preferences.getInstance().setClassicBest(Integer.toString(newBest));
-                        view.openEndGame(true, score);
                     }
                     else{
                         isBest = false;
-                        view.openEndGame(false, score);
                     }
+                    view.openEndGame(isBest, score);
                     uiWorkerTime.cancel();
                     this.cancel();
                 }
@@ -280,7 +278,7 @@ public class Presenter_Classic_Game {
                 Random random = new Random();
 
                 boolean isYellowAllowed = false;
-                while(remainingTime.get() > 0){
+                while(remainingTime.get() != -1){
                     if(!isPaused){
                         candidateCell = random.nextInt(gameSize);
                         while(buttonIndicators[candidateCell][0].get() != 0){
@@ -337,7 +335,7 @@ public class Presenter_Classic_Game {
         serviceTimeField.execute(new Runnable() {
             @Override
             public void run() {
-                while(remainingMillis.get() > 0){
+                while(remainingMillis.get() >= 0){
                     if(!isPaused) {
                         try {
                             Thread.sleep(Common_Parameters.SENSITIVITY_TIME);
@@ -357,11 +355,8 @@ public class Presenter_Classic_Game {
                     }
                 }
                 isFinished = true;
-//                uiWorkerTime.cancel();
-//                uiWorkerButton.cancel();
-                // TODO arcade kısmında direkt olarak true yapmak yerine,
-                // hedefe ulaşılma durumuna göre remainingmillis'i güncelle.
-                // hedefe ulaşılamadıysa true yap.
+                remainingTime.set(-1);
+                remainingMillis.set(-1);
             }
         });
     }
@@ -383,7 +378,7 @@ public class Presenter_Classic_Game {
             }
             score++;
             isLastPressedGreen.set(true);
-            view.setScore(baseScore + Integer.toString(score));
+            view.setScore(baseScore + score);
             if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                 view.setScoreColorGreen();
             }
@@ -399,7 +394,7 @@ public class Presenter_Classic_Game {
             buttonIndicators[buttonIndex][0].set(0);
             if(isLastPressedGreen.get()){
                 score++;
-                view.setScore(baseScore + Integer.toString(score));
+                view.setScore(baseScore + score);
                 if(score >= Common_Parameters.TARGET_CLASSIC[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
                     view.setScoreColorGreen();
                 }
@@ -448,4 +443,3 @@ public class Presenter_Classic_Game {
         view.openClassicMenu();
     }
 }
-// TODO arcade için yapmaya başla. classic bitti.

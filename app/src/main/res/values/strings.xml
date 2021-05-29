@@ -11,6 +11,7 @@
     <string name="survival_game_score">"SCORE: "</string>
     <string name="classic_game_target">"TARGET: "</string>
     <string name="classic_game_best">"BEST: "</string>
+    <string name="arcade_game_last_seconds">LAST SECONDS</string>
     <string name="arcade_game_target">TARGET:</string>
     <string name="arcade_game_best">BEST:</string>
     <string name="survival_game_best">"BEST: "</string>
