@@ -178,6 +178,7 @@ public class Presenter_Survival_Game {
 
         isFinished = false;
         isLastPressedGreen = new AtomicBoolean();
+        isLastPressedGreen.set(false);
         isAnyPressed = new AtomicBoolean();
         isAnyPressed.set(false);
         score = 0;
@@ -271,6 +272,22 @@ public class Presenter_Survival_Game {
                         }
                         if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters.SURVIVAL_NUMBER_OF_FIRING_BUTTONS[gameDifficultyIndex]+1))){
                             if(buttonIndicators[i][0].get() != 0){  // kullanıcı tıkladıysa 0'lanmış olabilir.
+                                if(buttonIndicators[i][0].get() == 1 || (buttonIndicators[i][0].get() == 2 && isLastPressedGreen.get())){
+                                    remainingChances--;
+                                    view.setChances(remainingChances);
+                                    if(isAudioEnabled){
+                                        view.playWrong(mediaIndexWrong);
+                                        mediaIndexWrong++;
+                                        if(mediaIndexWrong == 3){
+                                            mediaIndexWrong = 0;
+                                        }
+                                    }
+                                    if(remainingChances == 0){
+                                        isFinished = true;
+                                        remainingTime.set(-1);
+                                        remainingMillis.set(-1);
+                                    }
+                                }
                                 buttonIndicators[i][0].set(0);
                                 view.setButtonColor(i,0);
                             }

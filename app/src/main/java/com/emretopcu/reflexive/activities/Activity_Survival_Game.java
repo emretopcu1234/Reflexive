@@ -223,6 +223,9 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
 
     @Override
     public void setChances(int remainingChances) {
+        if(remainingChances < 0 || remainingChances > Common_Parameters.NUMBER_OF_SURVIVAL_CHANCES){   // ne olur ne olmaz diye kontrol amaçlı
+            return;
+        }
         for(int i=remainingChances; i<buttonChances.length; i++){
             buttonChances[i].setVisibility(View.INVISIBLE);
         }
