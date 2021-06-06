@@ -5,7 +5,8 @@ import android.os.CountDownTimer;
 
 import com.emretopcu.reflexive.R;
 import com.emretopcu.reflexive.interfaces.Interface_Survival_Game;
-import com.emretopcu.reflexive.models.Common_Parameters;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
+import com.emretopcu.reflexive.models.Database_Manager;
 import com.emretopcu.reflexive.models.User_Preferences;
 
 import java.util.Random;
@@ -45,8 +46,10 @@ public class Presenter_Survival_Game {
     private int score;
     private int remainingChances;
     private boolean isBest;
-    private int gameDifficultyIndex;
+    private int gameDifficultyIndex = 0;
     private AtomicInteger currentFragment;
+
+    private boolean isExitedOnPurpose = true;    // geri tusuna basılırsa true, diger durumlarda false
 
     public Presenter_Survival_Game(Context context, Interface_Survival_Game view) {
         this.context = context;
@@ -56,28 +59,39 @@ public class Presenter_Survival_Game {
     }
 
     public void onActivityResumed(){
-        view.setFragment(Common_Parameters.SURVIVAL_FRAGMENT_TYPE[0]);    // oyunda ilerlendikçe index artacak.
         if(User_Preferences.getInstance().isAudioEnabled()){
             onAudioEnabled();
         }
         else{
             onAudioDisabled();
         }
-        gameDifficultyIndex = 0;    // TODO oyun arkaplana alınıp yeniden gelirse vb bu duruma bir çözüm gerekebilir.
-        currentFragment = new AtomicInteger();
-        currentFragment.set(Common_Parameters.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);
-        isPlayActive = true;
-        isPaused = false;
-        view.setPause();
-        view.setBest(baseBest + User_Preferences.getInstance().getSurvivalBest());
-        view.setScore(baseScore + "0");
-        view.setChances(Common_Parameters.NUMBER_OF_SURVIVAL_CHANCES);
-        if(User_Preferences.getInstance().isSurvivalFirstEntrance()){
-            view.openHowToPlay();
+        if(isExitedOnPurpose){
+            isExitedOnPurpose = false;
+            isPlayActive = true;
+            isPaused = false;
+            gameDifficultyIndex = 0;
+            view.setFragment(Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);    // oyunda ilerlendikçe index artacak.
+            currentFragment = new AtomicInteger();
+            currentFragment.set(Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);
+            view.setPause();
+            view.setBest(baseBest + User_Preferences.getInstance().getSurvivalBest());
+            view.setScore(baseScore + "0");
+            view.setChances(Common_Parameters_Variables.NUMBER_OF_SURVIVAL_CHANCES);
+            if(User_Preferences.getInstance().isSurvivalFirstEntrance()){
+                view.openHowToPlay();
+            }
+            else{
+                countToStart();
+            }
         }
         else{
-            countToStart();
+            onPauseClicked();
         }
+    }
+
+    public void onActivityPaused(){
+        isPaused = true;
+        view.mute();
     }
 
     public void onPlayClicked(){
@@ -156,7 +170,7 @@ public class Presenter_Survival_Game {
     }
 
     private void startGame(){
-        switch (Common_Parameters.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]){
+        switch (Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]){
             case 0:
                 gameSize = 16;
                 break;
@@ -182,20 +196,20 @@ public class Presenter_Survival_Game {
         isAnyPressed = new AtomicBoolean();
         isAnyPressed.set(false);
         score = 0;
-        remainingChances = Common_Parameters.NUMBER_OF_SURVIVAL_CHANCES;
+        remainingChances = Common_Parameters_Variables.NUMBER_OF_SURVIVAL_CHANCES;
         mediaIndexRight = 0;
         mediaIndexWrong = 0;
 
         remainingTime = new AtomicInteger();
         remainingMillis = new AtomicInteger();
-        remainingTime.set(Common_Parameters.SURVIVAL_TIME[gameDifficultyIndex] * 1000);   // ms
-        remainingMillis.set(Common_Parameters.SURVIVAL_TIME[gameDifficultyIndex] * 1000); // ms
+        remainingTime.set(Common_Parameters_Variables.SURVIVAL_TIME[gameDifficultyIndex] * 1000);   // ms
+        remainingMillis.set(Common_Parameters_Variables.SURVIVAL_TIME[gameDifficultyIndex] * 1000); // ms
 
         // normal timer kullanamıyoruz, çünkü farklı bir thread'e geçiyor,
         // farklı thread'den de ui componentlarına erişemiyoruz.
         // ama countdowntimer main thread'den devam ediyor.
         // o yüzden countdowntimer kullanılıyor, süre dolunca yeniden başlıyor.
-        uiWorkerAllFields = new CountDownTimer(Common_Parameters.COUNT_DOWN_LENGTH, 500) {
+        uiWorkerAllFields = new CountDownTimer(Common_Parameters_Variables.COUNT_DOWN_LENGTH, 500) {
             // millisInFuture kısmının pek bir önemi yok.
             // o süre dolduğunda oyun devam ediyorsa timer otomatik olarak yeniden başlayacak.
             // ama her yeniden başlamada 1 sn falan atlama yaptığı için mümkün olduğunca yüksek yapmakta fayda var.
@@ -205,8 +219,8 @@ public class Presenter_Survival_Game {
             @Override
             public void onTick(long millisUntilFinished) {
                 if(!isPaused){
-                    if(currentFragment.get() != Common_Parameters.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]){
-                        currentFragment.set(Common_Parameters.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);
+                    if(currentFragment.get() != Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]){
+                        currentFragment.set(Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);
                         switch (currentFragment.get()){
                             case 0:
                                 gameSize = 16;
@@ -235,8 +249,8 @@ public class Presenter_Survival_Game {
                 // if(isPlayActive) ekleyemeyiz, oyun pause edildiğinde buraya gelmiş olabilir.
                 // zaten oyun bittiğinde her türlü burasi stop edilecek.
                 if(!isPaused) {
-                    if(currentFragment.get() != Common_Parameters.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]){
-                        currentFragment.set(Common_Parameters.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);
+                    if(currentFragment.get() != Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]){
+                        currentFragment.set(Common_Parameters_Variables.SURVIVAL_FRAGMENT_TYPE[gameDifficultyIndex]);
                         switch (currentFragment.get()){
                             case 0:
                                 gameSize = 16;
@@ -262,7 +276,7 @@ public class Presenter_Survival_Game {
             }
         }.start();
 
-        uiWorkerButton = new CountDownTimer(Common_Parameters.COUNT_DOWN_LENGTH, Common_Parameters.SENSITIVITY_UI) {
+        uiWorkerButton = new CountDownTimer(Common_Parameters_Variables.COUNT_DOWN_LENGTH, Common_Parameters_Variables.SENSITIVITY_UI) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if(!isFinished){
@@ -270,7 +284,7 @@ public class Presenter_Survival_Game {
                         if(buttonIndicators[i][0].get() != 0){
                             view.setButtonColor(i,buttonIndicators[i][0].get());
                         }
-                        if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters.SURVIVAL_NUMBER_OF_FIRING_BUTTONS[gameDifficultyIndex]+1))){
+                        if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters_Variables.SURVIVAL_NUMBER_OF_FIRING_BUTTONS[gameDifficultyIndex]+1))){
                             if(buttonIndicators[i][0].get() != 0){  // kullanıcı tıkladıysa 0'lanmış olabilir.
                                 if(buttonIndicators[i][0].get() == 1 || (buttonIndicators[i][0].get() == 2 && isLastPressedGreen.get())){
                                     remainingChances--;
@@ -298,6 +312,7 @@ public class Presenter_Survival_Game {
                     if(score > Integer.parseInt(User_Preferences.getInstance().getSurvivalBest())){
                         isBest = true;
                         User_Preferences.getInstance().setSurvivalBest(Integer.toString(score));
+                        Database_Manager.getInstance().updateUserScoreSurvival(score);
                     }
                     else{
                         isBest = false;
@@ -330,39 +345,39 @@ public class Presenter_Survival_Game {
                         while(buttonIndicators[candidateCell][0].get() != 0){
                             candidateCell = random.nextInt(gameSize);
                         }
-                        randomColorIndicator = random.nextInt(Common_Parameters.SURVIVAL_TOTAL_LIMIT[gameDifficultyIndex]);
+                        randomColorIndicator = random.nextInt(Common_Parameters_Variables.SURVIVAL_TOTAL_LIMIT[gameDifficultyIndex]);
                         while(!isYellowAllowed){
                             if(isAnyPressed.get()){
                                 isYellowAllowed = true;
                             }
-                            if(!(randomColorIndicator >= Common_Parameters.SURVIVAL_GREEN_LIMIT[gameDifficultyIndex]
-                                    && randomColorIndicator < Common_Parameters.SURVIVAL_YELLOW_LIMIT[gameDifficultyIndex])){
+                            if(!(randomColorIndicator >= Common_Parameters_Variables.SURVIVAL_GREEN_LIMIT[gameDifficultyIndex]
+                                    && randomColorIndicator < Common_Parameters_Variables.SURVIVAL_YELLOW_LIMIT[gameDifficultyIndex])){
                                 break;
                             }
-                            randomColorIndicator = random.nextInt(Common_Parameters.SURVIVAL_TOTAL_LIMIT[gameDifficultyIndex]);
+                            randomColorIndicator = random.nextInt(Common_Parameters_Variables.SURVIVAL_TOTAL_LIMIT[gameDifficultyIndex]);
                         }
 
-                        if(randomColorIndicator < Common_Parameters.SURVIVAL_GREEN_LIMIT[gameDifficultyIndex]){
+                        if(randomColorIndicator < Common_Parameters_Variables.SURVIVAL_GREEN_LIMIT[gameDifficultyIndex]){
                             buttonIndicators[candidateCell][0].set(1);
                         }
-                        else if(randomColorIndicator < Common_Parameters.SURVIVAL_YELLOW_LIMIT[gameDifficultyIndex]){
+                        else if(randomColorIndicator < Common_Parameters_Variables.SURVIVAL_YELLOW_LIMIT[gameDifficultyIndex]){
                             buttonIndicators[candidateCell][0].set(2);
                         }
                         else{
                             buttonIndicators[candidateCell][0].set(3);
                         }
-                        if(buttonFireSequence.get() > Common_Parameters.SURVIVAL_NUMBER_OF_FIRING_BUTTONS[gameDifficultyIndex]){
+                        if(buttonFireSequence.get() > Common_Parameters_Variables.SURVIVAL_NUMBER_OF_FIRING_BUTTONS[gameDifficultyIndex]){
                             buttonFireSequence.set(0);
                         }
                         buttonIndicators[candidateCell][1].set(buttonFireSequence.get());
                         buttonFireSequence.set(buttonFireSequence.get() + 1);
 
                         try {
-                            Thread.sleep(Common_Parameters.SURVIVAL_FIRE_INTERVAL[gameDifficultyIndex]);
+                            Thread.sleep(Common_Parameters_Variables.SURVIVAL_FIRE_INTERVAL[gameDifficultyIndex]);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        remainingTime.set(remainingTime.get() - Common_Parameters.SURVIVAL_FIRE_INTERVAL[gameDifficultyIndex]);
+                        remainingTime.set(remainingTime.get() - Common_Parameters_Variables.SURVIVAL_FIRE_INTERVAL[gameDifficultyIndex]);
                     }
                     else{
                         synchronized (lock){
@@ -381,18 +396,18 @@ public class Presenter_Survival_Game {
         serviceTimeField.execute(new Runnable() {
             @Override
             public void run() {
-                for(int i=0; i<Common_Parameters.NUMBER_OF_SURVIVAL_LEVELS; i++){
+                for(int i = 0; i< Common_Parameters_Variables.NUMBER_OF_SURVIVAL_LEVELS; i++){
                     if(isFinished){
                         break;
                     }
                     while(remainingMillis.get() >= 0){
                         if(!isPaused) {
                             try {
-                                Thread.sleep(Common_Parameters.SENSITIVITY_TIME);
+                                Thread.sleep(Common_Parameters_Variables.SENSITIVITY_TIME);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            remainingMillis.set(remainingMillis.get() - Common_Parameters.SENSITIVITY_TIME);
+                            remainingMillis.set(remainingMillis.get() - Common_Parameters_Variables.SENSITIVITY_TIME);
                         }
                         else{
                             synchronized (lock){
@@ -404,17 +419,20 @@ public class Presenter_Survival_Game {
                             }
                         }
                     }
-                    if(gameDifficultyIndex != Common_Parameters.NUMBER_OF_SURVIVAL_LEVELS-1){
+                    if(gameDifficultyIndex != Common_Parameters_Variables.NUMBER_OF_SURVIVAL_LEVELS-1){
                         gameDifficultyIndex++;
                     }
-                    remainingTime.set(Common_Parameters.SURVIVAL_TIME[gameDifficultyIndex] * 1000);
-                    remainingMillis.set(Common_Parameters.SURVIVAL_TIME[gameDifficultyIndex] * 1000);
+                    remainingTime.set(Common_Parameters_Variables.SURVIVAL_TIME[gameDifficultyIndex] * 1000);
+                    remainingMillis.set(Common_Parameters_Variables.SURVIVAL_TIME[gameDifficultyIndex] * 1000);
                 }
             }
         });
     }
 
     public void onBackPressed(){
+        isPlayActive = true;
+        isPaused = false;
+        isExitedOnPurpose = true;
         uiWorkerAllFields.cancel();
         uiWorkerButton.cancel();
         serviceGameLogic.shutdownNow();
@@ -492,5 +510,9 @@ public class Presenter_Survival_Game {
     public void onEndGameDismissRequested(){
         view.dismissEndGame(isBest);
         view.openMain();
+        if(System.currentTimeMillis() - Common_Parameters_Variables.LAST_AD_TIME >= Common_Parameters_Variables.AD_TIME_INTERVAL){
+            Common_Parameters_Variables.LAST_AD_TIME = System.currentTimeMillis();
+            view.showInterstitialAd();
+        }
     }
 }

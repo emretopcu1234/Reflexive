@@ -1,8 +1,10 @@
 package com.emretopcu.reflexive.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +22,16 @@ import com.emretopcu.reflexive.interfaces.Interface_Arcade_Game;
 import com.emretopcu.reflexive.interfaces.Interface_Fragment;
 import com.emretopcu.reflexive.interfaces.Interface_General_Game_Activity;
 import com.emretopcu.reflexive.presenters.Presenter_Arcade_Game;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.OnPaidEventListener;
+import com.google.android.gms.ads.ResponseInfo;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
+import javax.annotation.Nullable;
 
 public class Activity_Arcade_Game extends AppCompatActivity implements Interface_Arcade_Game, Interface_General_Game_Activity {
 
@@ -56,6 +68,12 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     private AlertDialog alertDialogEndGameWithBest;
     private AlertDialog alertDialogEndGameWithoutBest;
 
+    private AdView adView;
+    private AdRequest adRequestBanner;
+
+    private InterstitialAd interstitialAd;
+    private AdRequest adRequestInterstitial;
+
     private Interface_Fragment fragment;
     private Presenter_Arcade_Game presenter;
 
@@ -63,6 +81,12 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_arcade_game);
+
+        adView = findViewById(R.id.adView_arcade);
+        adRequestBanner = new AdRequest.Builder().build();
+        adView.loadAd(adRequestBanner);
+
+        adRequestInterstitial = new AdRequest.Builder().build();
 
         mediaPlayerIntro = Activity_Initial.mediaPlayerIntro;
         mediaPlayerGame = Activity_Initial.mediaPlayerGame;
@@ -156,7 +180,67 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
         if(mediaPlayerIntro.isPlaying()){
             mediaPlayerIntro.pause();
         }
+        if(interstitialAd == null) {
+            interstitialAd = new InterstitialAd() {
+                @NonNull
+                @Override
+                public String getAdUnitId() {
+                    return null;
+                }
+
+                @Override
+                public void show(@NonNull Activity activity) {
+                }
+
+                @Override
+                public void setFullScreenContentCallback(@Nullable FullScreenContentCallback fullScreenContentCallback) {
+                }
+
+                @Nullable
+                @Override
+                public FullScreenContentCallback getFullScreenContentCallback() {
+                    return null;
+                }
+
+                @Override
+                public void setImmersiveMode(boolean b) {
+                }
+
+                @Nullable
+                @Override
+                public ResponseInfo getResponseInfo() {
+                    return null;
+                }
+
+                @Override
+                public void setOnPaidEventListener(@Nullable OnPaidEventListener onPaidEventListener) {
+                }
+
+                @Nullable
+                @Override
+                public OnPaidEventListener getOnPaidEventListener() {
+                    return null;
+                }
+            };
+            interstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequestInterstitial, new InterstitialAdLoadCallback() {
+                @Override
+                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                    Activity_Arcade_Game.this.interstitialAd = interstitialAd;
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    interstitialAd = null;
+                }
+            });
+        }
         presenter.onActivityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onActivityPaused();
     }
 
     @Override
@@ -202,6 +286,13 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     public void setAudioDisabled() {
         buttonAudioEnabled.setVisibility(View.INVISIBLE);
         buttonAudioDisabled.setVisibility(View.VISIBLE);
+        if(mediaPlayerGame.isPlaying()){
+            mediaPlayerGame.pause();
+        }
+    }
+
+    @Override
+    public void mute() {
         if(mediaPlayerGame.isPlaying()){
             mediaPlayerGame.pause();
         }
@@ -390,5 +481,12 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
     @Override
     public void onButtonClicked(int buttonIndex) {
         presenter.onButtonClicked(buttonIndex);
+    }
+
+    @Override
+    public void showInterstitialAd() {
+        if (interstitialAd != null) {
+            interstitialAd.show(Activity_Arcade_Game.this);
+        }
     }
 }

@@ -3,7 +3,7 @@ package com.emretopcu.reflexive.presenters;
 import android.content.Context;
 
 import com.emretopcu.reflexive.interfaces.Interface_Classic_Menu;
-import com.emretopcu.reflexive.models.Common_Parameters;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
 import com.emretopcu.reflexive.models.User_Preferences;
 
 public class Presenter_Classic_Menu {
@@ -26,6 +26,10 @@ public class Presenter_Classic_Menu {
         view.showLevels(User_Preferences.getInstance().getMaxUnlockedClassicLevel() -1);  // level x = position x-1.
     }
 
+    public void onActivityPaused(){
+        view.mute();
+    }
+
     public void onAudioEnabled() {
         User_Preferences.getInstance().setAudioEnabled(true);
         view.setAudioEnabled();
@@ -37,7 +41,7 @@ public class Presenter_Classic_Menu {
     }
 
     public void onLevelSelectedAtPosition(int selectedPosition){
-        Common_Parameters.CURRENT_CLASSIC_LEVEL = selectedPosition + 1;
+        Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL = selectedPosition + 1;
         view.openGame();
     }
 

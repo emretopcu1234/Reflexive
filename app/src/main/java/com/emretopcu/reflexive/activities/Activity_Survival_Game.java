@@ -1,8 +1,10 @@
 package com.emretopcu.reflexive.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -19,8 +21,18 @@ import com.emretopcu.reflexive.fragments.Fragment_6x6;
 import com.emretopcu.reflexive.interfaces.Interface_Fragment;
 import com.emretopcu.reflexive.interfaces.Interface_General_Game_Activity;
 import com.emretopcu.reflexive.interfaces.Interface_Survival_Game;
-import com.emretopcu.reflexive.models.Common_Parameters;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
 import com.emretopcu.reflexive.presenters.Presenter_Survival_Game;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.OnPaidEventListener;
+import com.google.android.gms.ads.ResponseInfo;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
+import javax.annotation.Nullable;
 
 public class Activity_Survival_Game extends AppCompatActivity implements Interface_Survival_Game, Interface_General_Game_Activity {
 
@@ -55,6 +67,12 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
     private AlertDialog alertDialogEndGameWithBest;
     private AlertDialog alertDialogEndGameWithoutBest;
 
+    private AdView adView;
+    private AdRequest adRequestBanner;
+
+    private InterstitialAd interstitialAd;
+    private AdRequest adRequestInterstitial;
+
     private Interface_Fragment fragment;
     private Presenter_Survival_Game presenter;
 
@@ -62,6 +80,12 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_survival_game);
+
+        adView = findViewById(R.id.adView_survival);
+        adRequestBanner = new AdRequest.Builder().build();
+        adView.loadAd(adRequestBanner);
+
+        adRequestInterstitial = new AdRequest.Builder().build();
 
         mediaPlayerIntro = Activity_Initial.mediaPlayerIntro;
         mediaPlayerGame = Activity_Initial.mediaPlayerGame;
@@ -83,7 +107,7 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
         textViewPaused_1 = findViewById(R.id.textView_survival_game_paused_1);
         textViewPaused_2 = findViewById(R.id.textView_survival_game_paused_2);
 
-        buttonChances = new Button[Common_Parameters.NUMBER_OF_SURVIVAL_CHANCES];
+        buttonChances = new Button[Common_Parameters_Variables.NUMBER_OF_SURVIVAL_CHANCES];
         buttonChances[0] = findViewById(R.id.button_survival_game_life0);
         buttonChances[1] = findViewById(R.id.button_survival_game_life1);
         buttonChances[2] = findViewById(R.id.button_survival_game_life2);
@@ -160,7 +184,67 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
         if(mediaPlayerIntro.isPlaying()){
             mediaPlayerIntro.pause();
         }
+        if(interstitialAd == null) {
+            interstitialAd = new InterstitialAd() {
+                @NonNull
+                @Override
+                public String getAdUnitId() {
+                    return null;
+                }
+
+                @Override
+                public void show(@NonNull Activity activity) {
+                }
+
+                @Override
+                public void setFullScreenContentCallback(@Nullable FullScreenContentCallback fullScreenContentCallback) {
+                }
+
+                @Nullable
+                @Override
+                public FullScreenContentCallback getFullScreenContentCallback() {
+                    return null;
+                }
+
+                @Override
+                public void setImmersiveMode(boolean b) {
+                }
+
+                @Nullable
+                @Override
+                public ResponseInfo getResponseInfo() {
+                    return null;
+                }
+
+                @Override
+                public void setOnPaidEventListener(@Nullable OnPaidEventListener onPaidEventListener) {
+                }
+
+                @Nullable
+                @Override
+                public OnPaidEventListener getOnPaidEventListener() {
+                    return null;
+                }
+            };
+            interstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequestInterstitial, new InterstitialAdLoadCallback() {
+                @Override
+                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                    Activity_Survival_Game.this.interstitialAd = interstitialAd;
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    interstitialAd = null;
+                }
+            });
+        }
         presenter.onActivityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onActivityPaused();
     }
 
     @Override
@@ -212,6 +296,13 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
     }
 
     @Override
+    public void mute() {
+        if(mediaPlayerGame.isPlaying()){
+            mediaPlayerGame.pause();
+        }
+    }
+
+    @Override
     public void setBest(String best) {
         textViewBest.setText(best);
     }
@@ -223,7 +314,7 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
 
     @Override
     public void setChances(int remainingChances) {
-        if(remainingChances < 0 || remainingChances > Common_Parameters.NUMBER_OF_SURVIVAL_CHANCES){   // ne olur ne olmaz diye kontrol amaçlı
+        if(remainingChances < 0 || remainingChances > Common_Parameters_Variables.NUMBER_OF_SURVIVAL_CHANCES){   // ne olur ne olmaz diye kontrol amaçlı
             return;
         }
         for(int i=remainingChances; i<buttonChances.length; i++){
@@ -372,5 +463,12 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
     @Override
     public void onButtonClicked(int buttonIndex) {
         presenter.onButtonClicked(buttonIndex);
+    }
+
+    @Override
+    public void showInterstitialAd() {
+        if (interstitialAd != null) {
+            interstitialAd.show(Activity_Survival_Game.this);
+        }
     }
 }

@@ -4,6 +4,7 @@ public interface Interface_Survival_Game {
     void setFragment(int fragmentType);
     void setAudioEnabled();
     void setAudioDisabled();
+    void mute();
     void setBest(String best);
     void setScore(String score);
     void setChances(int remainingChances);
@@ -22,4 +23,5 @@ public interface Interface_Survival_Game {
     void openEndGame(boolean isBest, int score);
     void dismissEndGame(boolean isBest);
     void openMain();
+    void showInterstitialAd();
 }

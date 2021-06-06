@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.emretopcu.reflexive.R;
 import com.emretopcu.reflexive.interfaces.Interface_First_Entrance;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
 import com.emretopcu.reflexive.models.Database_Manager;
 import com.emretopcu.reflexive.presenters.Presenter_First_Entrance;
 
@@ -45,6 +46,11 @@ public class Activity_First_Entrance extends AppCompatActivity implements Interf
     }
 
     @Override
+    public void onBackPressed() {
+        // nothing  (zaten herhangi bir layout olmadığı için buraya bile düşmeyecek.)
+    }
+
+    @Override
     public void openUsernameDialog() {
         EditText editTextNewUsername = viewEditUsernameDialog.findViewById(R.id.edit_text_username_dialog_username);
         editTextNewUsername.setSelection(editTextNewUsername.getText().length());
@@ -71,6 +77,7 @@ public class Activity_First_Entrance extends AppCompatActivity implements Interf
     public void dismissUsernameDialog() {
         alertDialog.dismiss();
         Database_Manager.getInstance().getLeaderboardInfo();
+        Common_Parameters_Variables.IS_NEW_LEADERBOARD_VISITED = true;  // visit edilmese bile veritabanından bilgiler alındı.
         Intent i = new Intent(getApplicationContext(), Activity_Main.class);
         startActivity(i);
     }

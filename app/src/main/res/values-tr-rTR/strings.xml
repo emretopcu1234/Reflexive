@@ -71,4 +71,6 @@
     <string name="end_game_without_best_score">SKOR:</string>
     <string name="end_game_without_best_ok">TAMAM</string>
     <string name="main_toast_database_error">Veritabanına bağlanılamadı. Daha sonra yeniden dene.</string>
+    <string name="main_toast_arcade">Seviye 5 geçildiğinde açılacaktır.</string>
+    <string name="main_toast_survival">Seviye 10 geçildiğinde açılacaktır.</string>
 </resources>

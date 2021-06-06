@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import com.emretopcu.reflexive.R;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
 import com.emretopcu.reflexive.models.Database_Manager;
 import com.emretopcu.reflexive.models.User_Info;
 import com.emretopcu.reflexive.models.User_Preferences;
@@ -14,14 +15,9 @@ import com.google.android.gms.ads.MobileAds;
 
 public class Activity_Initial extends AppCompatActivity {
 
-    // TODO https://stackoverflow.com/questions/42342183/recycler-view-center-selected-item
-    //   bu linkten hangi leveldaysan o levela scroll etmeyi araştır.
-
     // TODO logo ekle.
 
-    // TODO ad'lere tıklanırsa, kapatılırsa, uygulamadan çıkılırsa... case'lerini ekle.
-
-    // TODO interstitial ad'leri gerekli tüm activity'lere ekle.
+    // TODO ad'lere tıklanırsa, kapatılırsa, uygulamadan çıkılırsa... case'lerini test ederken dene.
 
     // TODO uygulamayı playstore'a yükleyince admob'da bunu belirt. ayrıca adunitid'lerini gerçek id'ler yap.
 
@@ -29,23 +25,10 @@ public class Activity_Initial extends AppCompatActivity {
 
     // TODO https://firebase.google.com/docs/admob/android/quick-start step 1: 2.a ve 2.b
 
-    // TODO reklam çıkma sürelerini ayarla.
+    // TODO commonparameters'taki değerleri düzenle.
 
-    // TODO anasayfada arcade ve survival tıklanırlarsa toast message çıkar.
+    // TODO firebase'deki leaderboardu duzenle.
 
-    // TODO ana ekrandayken geri tuşuna basılmasına izin verme.
-
-    // TODO activityler arası geçişlerde onResume kısmını ayarla. (rekor kırılınca anasayfadaki alan güncellenecek vb.)
-
-    // TODO presenterlara gerekli eklemeleri yap (main için arcade survival butonlarının durumu, textviewlardaki sayılar vb)
-
-    // TODO doğru yanlış clicklerdeki oyun seslerini unutma.
-
-    // TODO her bir activity için onbackpressed metodunu doldur. (bazıları yapıldı, bazıları yapılmadı.)
-
-    // TODO her class'taki sarı renkli uyarıları incele.
-
-    // TODO oyunda kişi kendi best'ini geçerse firebase'e gönder. duruma göre leaderboard'u güncelle, user_info, user_preferences vb hallet. (presenter'larda yapılacak.)
 
 
     public static MediaPlayer mediaPlayerIntro;
@@ -88,7 +71,7 @@ public class Activity_Initial extends AppCompatActivity {
         mediaPlayerWrong_2 = MediaPlayer.create(getApplicationContext(), R.raw.wrong);
         mediaPlayerWrong_2.setLooping(false);
 
-
+        Common_Parameters_Variables.LAST_AD_TIME = System.currentTimeMillis();
 
         if(User_Preferences.getInstance().getUsername().equals("TEMPFORFIRSTENTRANCE")){
             User_Info.getInstance().setUsername("TEMPFORFIRSTENTRANCE");
@@ -100,6 +83,7 @@ public class Activity_Initial extends AppCompatActivity {
         }
         else{
             Database_Manager.getInstance().getLeaderboardInfo();
+            Common_Parameters_Variables.IS_NEW_LEADERBOARD_VISITED = true;  // visit edilmese bile veritabanından bilgiler alındı.
             User_Info.getInstance().setUsername(User_Preferences.getInstance().getUsername());
             User_Info.getInstance().setClassicBest(Integer.parseInt(User_Preferences.getInstance().getClassicBest()));
             User_Info.getInstance().setArcadeBest(Integer.parseInt(User_Preferences.getInstance().getArcadeBest()));
@@ -107,5 +91,10 @@ public class Activity_Initial extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), Activity_Main.class);
             startActivity(i);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // nothing  (zaten herhangi bir layout olmadığı için buraya bile düşmeyecek.)
     }
 }

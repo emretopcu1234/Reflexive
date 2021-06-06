@@ -35,6 +35,10 @@ public class Activity_Main extends AppCompatActivity implements Interface_Main {
     private View viewEditUsernameDialog;
     private AlertDialog alertDialog;
 
+    private Toast toastArcade;
+    private Toast toastSurvival;
+    private Toast toastLeaderboard;
+
     private Presenter_Main presenter;
 
     @Override
@@ -58,6 +62,10 @@ public class Activity_Main extends AppCompatActivity implements Interface_Main {
         buttonArcade = findViewById(R.id.button_main_arcade);
         buttonSurvival = findViewById(R.id.button_main_survival);
         buttonLeaderboard = findViewById(R.id.button_main_leaderboard);
+
+        toastArcade = Toast.makeText(this, getResources().getString(R.string.main_toast_arcade), Toast.LENGTH_SHORT);
+        toastSurvival = Toast.makeText(this, getResources().getString(R.string.main_toast_survival), Toast.LENGTH_SHORT);
+        toastLeaderboard = Toast.makeText(this, getResources().getString(R.string.main_toast_database_error), Toast.LENGTH_SHORT);
 
         builder = new AlertDialog.Builder(this);
         viewEditUsernameDialog = this.getLayoutInflater().inflate(R.layout.dialog_edit_username, null);
@@ -124,7 +132,22 @@ public class Activity_Main extends AppCompatActivity implements Interface_Main {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onActivityPaused();
+    }
+
+    @Override
+    public void onBackPressed() {
+        presenter.onBackPressed();
+    }
+
+    @Override
     public void openUsernameDialog(String username){
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
         EditText editTextNewUsername = viewEditUsernameDialog.findViewById(R.id.edit_text_username_dialog_username);
         editTextNewUsername.setText(username);
         editTextNewUsername.setSelection(editTextNewUsername.getText().length());
@@ -198,6 +221,13 @@ public class Activity_Main extends AppCompatActivity implements Interface_Main {
     }
 
     @Override
+    public void mute() {
+        if(mediaPlayerIntro.isPlaying()){
+            mediaPlayerIntro.pause();
+        }
+    }
+
+    @Override
     public void setUsername(String username) {
         textViewUsername.setText(username);
     }
@@ -219,30 +249,91 @@ public class Activity_Main extends AppCompatActivity implements Interface_Main {
 
     @Override
     public void openClassic() {
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
         Intent i = new Intent(getApplicationContext(), Activity_Classic_Menu.class);
         startActivity(i);
     }
 
     @Override
     public void openArcade() {
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
         Intent i = new Intent(getApplicationContext(), Activity_Arcade_Game.class);
         startActivity(i);
     }
 
     @Override
     public void openSurvival() {
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
         Intent i = new Intent(getApplicationContext(), Activity_Survival_Game.class);
         startActivity(i);
     }
 
     @Override
     public void openLeaderboard() {
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
         Intent i = new Intent(getApplicationContext(), Activity_Leaderboard.class);
         startActivity(i);
     }
 
     @Override
     public void showDatabaseErrorToast() {
-        Toast.makeText(this, getResources().getString(R.string.main_toast_database_error), Toast.LENGTH_SHORT).show();
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
+        toastLeaderboard = Toast.makeText(this, getResources().getString(R.string.main_toast_database_error), Toast.LENGTH_SHORT);
+        toastLeaderboard.show();
+    }
+
+    @Override
+    public void setArcadeButtonColor(int colorType) {
+        if(colorType == 0){
+            buttonArcade.setBackground(getApplicationContext().getDrawable(R.drawable.background_button_menu_intermediate_gray));
+        }
+        else{
+            buttonArcade.setBackground(getApplicationContext().getDrawable(R.drawable.background_button_menu_dark_gray));
+        }
+    }
+
+    @Override
+    public void setSurvivalButtonColor(int colorType) {
+        if(colorType == 0){
+            buttonSurvival.setBackground(getApplicationContext().getDrawable(R.drawable.background_button_menu_intermediate_gray));
+        }
+        else{
+            buttonSurvival.setBackground(getApplicationContext().getDrawable(R.drawable.background_button_menu_dark_gray));
+        }
+    }
+
+    @Override
+    public void showArcadeToast() {
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
+        toastArcade = Toast.makeText(this, getResources().getString(R.string.main_toast_arcade), Toast.LENGTH_SHORT);
+        toastArcade.show();
+    }
+
+    @Override
+    public void showSurvivalToast() {
+        toastArcade.cancel();
+        toastSurvival.cancel();
+        toastLeaderboard.cancel();
+
+        toastSurvival = Toast.makeText(this, getResources().getString(R.string.main_toast_survival), Toast.LENGTH_SHORT);
+        toastSurvival.show();
     }
 }

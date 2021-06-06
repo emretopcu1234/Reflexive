@@ -1,11 +1,16 @@
 package com.emretopcu.reflexive.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -14,9 +19,18 @@ import com.emretopcu.reflexive.interfaces.Interface_Leaderboard;
 import com.emretopcu.reflexive.presenters.Presenter_Leaderboard;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.OnPaidEventListener;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
+import javax.annotation.Nullable;
 
 public class Activity_Leaderboard extends AppCompatActivity implements Interface_Leaderboard {
+
+    private MediaPlayer mediaPlayerIntro;
 
     private RecyclerViewAdapter_Leaderboard adapter;
     private RecyclerView recyclerView_leaderboard;
@@ -30,15 +44,18 @@ public class Activity_Leaderboard extends AppCompatActivity implements Interface
 
     private AdView adView;
     private AdRequest adRequestBanner;
-    private InterstitialAd interstitialAd;
-    private AdRequest adRequestInterstitial;
-    private boolean isInterstitialAdLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_leaderboard);
+
+        adView = findViewById(R.id.adView_leaderboard);
+        adRequestBanner = new AdRequest.Builder().build();
+        adView.loadAd(adRequestBanner);
+
+        mediaPlayerIntro = Activity_Initial.mediaPlayerIntro;
 
         recyclerView_leaderboard = findViewById(R.id.recyclerView_leaderboard);
         recyclerView_leaderboard.addItemDecoration(new DividerItemDecoration(recyclerView_leaderboard.getContext(), DividerItemDecoration.VERTICAL));
@@ -71,89 +88,6 @@ public class Activity_Leaderboard extends AppCompatActivity implements Interface
                 presenter.onModeSelected(2);
             }
         });
-
-
-
-
-
-//        Button button = findViewById(R.id.button_leaderboard_classic);      // DENEME MAKSATLI
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showInterstitialAd(v);
-//            }
-//        });
-//
-//
-//        adView = findViewById(R.id.adView_leaderboard);
-//        adRequestBanner = new AdRequest.Builder().build();
-//        adView.loadAd(adRequestBanner);
-//
-//
-//        adRequestInterstitial = new AdRequest.Builder().build();
-//        interstitialAd = new InterstitialAd() {
-//            @NonNull
-//            @Override
-//            public String getAdUnitId() {
-//                return null;
-//            }
-//
-//            @Override
-//            public void show(@NonNull Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void setFullScreenContentCallback(@Nullable FullScreenContentCallback fullScreenContentCallback) {
-//
-//            }
-//
-//            @Nullable
-//            @Override
-//            public FullScreenContentCallback getFullScreenContentCallback() {
-//                return null;
-//            }
-//
-//            @Override
-//            public void setImmersiveMode(boolean b) {
-//
-//            }
-//
-//            @Nullable
-//            @Override
-//            public ResponseInfo getResponseInfo() {
-//                return null;
-//            }
-//
-//            @Override
-//            public void setOnPaidEventListener(@Nullable OnPaidEventListener onPaidEventListener) {
-//
-//            }
-//
-//            @Nullable
-//            @Override
-//            public OnPaidEventListener getOnPaidEventListener() {
-//                return null;
-//            }
-//        };
-//        isInterstitialAdLoaded = false;
-//        interstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequestInterstitial, new InterstitialAdLoadCallback(){
-//            @Override
-//            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-//                Log.d("ADDDD","interstitial loaded");
-//                Activity_Leaderboard.this.interstitialAd = interstitialAd;
-//                isInterstitialAdLoaded = true;
-//            }
-//
-//            @Override
-//            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-//                Log.d("ADDDD","interstitial failed");
-//                interstitialAd = null;
-//            }
-//        });
-
-
-
     }
 
     @Override
@@ -162,9 +96,35 @@ public class Activity_Leaderboard extends AppCompatActivity implements Interface
         presenter.onActivityResumed();
     }
 
-    public void showInterstitialAd(View v){
-        if (interstitialAd != null) {
-            interstitialAd.show(Activity_Leaderboard.this);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onActivityPaused();
+    }
+
+    @Override
+    public void onBackPressed() {
+        presenter.onBackPressed();
+    }
+
+    @Override
+    public void setAudioEnabled() {
+        if(!mediaPlayerIntro.isPlaying()){
+            mediaPlayerIntro.start();
+        }
+    }
+
+    @Override
+    public void setAudioDisabled() {
+        if(mediaPlayerIntro.isPlaying()){
+            mediaPlayerIntro.pause();
+        }
+    }
+
+    @Override
+    public void mute() {
+        if(mediaPlayerIntro.isPlaying()){
+            mediaPlayerIntro.pause();
         }
     }
 
@@ -189,5 +149,11 @@ public class Activity_Leaderboard extends AppCompatActivity implements Interface
         adapter = new RecyclerViewAdapter_Leaderboard(this, selectedMode, numberOnLeaderboard);
         recyclerView_leaderboard.setLayoutManager(layoutManager);
         recyclerView_leaderboard.setAdapter(adapter);
+    }
+
+    @Override
+    public void openMain() {
+        Intent i = new Intent(getApplicationContext(), Activity_Main.class);
+        startActivity(i);
     }
 }

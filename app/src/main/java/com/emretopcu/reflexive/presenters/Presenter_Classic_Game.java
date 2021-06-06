@@ -5,7 +5,8 @@ import android.os.CountDownTimer;
 
 import com.emretopcu.reflexive.R;
 import com.emretopcu.reflexive.interfaces.Interface_Classic_Game;
-import com.emretopcu.reflexive.models.Common_Parameters;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
+import com.emretopcu.reflexive.models.Database_Manager;
 import com.emretopcu.reflexive.models.User_Preferences;
 
 import java.util.Random;
@@ -48,6 +49,8 @@ public class Presenter_Classic_Game {
     private int score;
     private boolean isBest;
 
+    private boolean isExitedOnPurpose = true;    // geri tusuna basılırsa true, diger durumlarda false
+
     public Presenter_Classic_Game(Context context, Interface_Classic_Game view) {
         this.context = context;
         this.view = view;
@@ -57,27 +60,36 @@ public class Presenter_Classic_Game {
     }
 
     public void onActivityResumed(){
-        view.setFragment(Common_Parameters.CLASSIC_FRAGMENT_TYPE[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
-        if(User_Preferences.getInstance().isAudioEnabled()){
+        if (User_Preferences.getInstance().isAudioEnabled()) {
             onAudioEnabled();
-        }
-        else{
+        } else {
             onAudioDisabled();
         }
-        isPlayActive = true;
-        isPaused = false;
-        view.setPause();
-        view.setBest(baseBest + User_Preferences.getInstance().getClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL));
-        view.setTarget(baseTarget + Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
-        view.setScoreColorDefault();
-        view.setScore(baseScore + "0");
-        view.setTime(Integer.toString(Common_Parameters.CLASSIC_TIME[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]));
-        if(User_Preferences.getInstance().isClassicFirstEntrance()){
-            view.openHowToPlay();
+        if(isExitedOnPurpose) {
+            isExitedOnPurpose = false;
+            isPlayActive = true;
+            isPaused = false;
+            view.setFragment(Common_Parameters_Variables.CLASSIC_FRAGMENT_TYPE[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL - 1]);
+            view.setPause();
+            view.setBest(baseBest + User_Preferences.getInstance().getClassicBestLevel(Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL));
+            view.setTarget(baseTarget + Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL - 1]);
+            view.setScoreColorDefault();
+            view.setScore(baseScore + "0");
+            view.setTime(Integer.toString(Common_Parameters_Variables.CLASSIC_TIME[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL - 1]));
+            if (User_Preferences.getInstance().isClassicFirstEntrance()) {
+                view.openHowToPlay();
+            } else {
+                countToStart();
+            }
         }
         else{
-            countToStart();
+            onPauseClicked();
         }
+    }
+
+    public void onActivityPaused(){
+        isPaused = true;
+        view.mute();
     }
 
     public void onPlayClicked(){
@@ -158,7 +170,7 @@ public class Presenter_Classic_Game {
     }
 
     private void startGame(){
-        switch (Common_Parameters.CLASSIC_FRAGMENT_TYPE[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+        switch (Common_Parameters_Variables.CLASSIC_FRAGMENT_TYPE[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
             case 0:
                 gameSize = 16;
                 break;
@@ -188,14 +200,14 @@ public class Presenter_Classic_Game {
 
         remainingTime = new AtomicInteger();
         remainingMillis = new AtomicInteger();
-        remainingTime.set(Common_Parameters.CLASSIC_TIME[Common_Parameters.CURRENT_CLASSIC_LEVEL-1] * 1000);   // ms
-        remainingMillis.set(Common_Parameters.CLASSIC_TIME[Common_Parameters.CURRENT_CLASSIC_LEVEL-1] * 1000); // ms
+        remainingTime.set(Common_Parameters_Variables.CLASSIC_TIME[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1] * 1000);   // ms
+        remainingMillis.set(Common_Parameters_Variables.CLASSIC_TIME[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1] * 1000); // ms
 
         // normal timer kullanamıyoruz, çünkü farklı bir thread'e geçiyor,
         // farklı thread'den de ui componentlarına erişemiyoruz.
         // ama countdowntimer main thread'den devam ediyor.
         // o yüzden countdowntimer kullanılıyor, süre dolunca yeniden başlıyor.
-        uiWorkerTime = new CountDownTimer(Common_Parameters.COUNT_DOWN_LENGTH, 500) {
+        uiWorkerTime = new CountDownTimer(Common_Parameters_Variables.COUNT_DOWN_LENGTH, 500) {
             // millisInFuture kısmının pek bir önemi yok.
             // o süre dolduğunda oyun devam ediyorsa timer otomatik olarak yeniden başlayacak.
             // ama her yeniden başlamada 1 sn falan atlama yaptığı için mümkün olduğunca yüksek yapmakta fayda var.
@@ -218,7 +230,7 @@ public class Presenter_Classic_Game {
             }
         }.start();
 
-        uiWorkerButton = new CountDownTimer(Common_Parameters.COUNT_DOWN_LENGTH, Common_Parameters.SENSITIVITY_UI) {
+        uiWorkerButton = new CountDownTimer(Common_Parameters_Variables.COUNT_DOWN_LENGTH, Common_Parameters_Variables.SENSITIVITY_UI) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if(!isFinished){
@@ -226,7 +238,7 @@ public class Presenter_Classic_Game {
                         if(buttonIndicators[i][0].get() != 0){
                             view.setButtonColor(i,buttonIndicators[i][0].get());
                         }
-                        if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters.CLASSIC_NUMBER_OF_FIRING_BUTTONS[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]+1))){
+                        if(buttonIndicators[i][1].get() == ((buttonFireSequence.get()) % (Common_Parameters_Variables.CLASSIC_NUMBER_OF_FIRING_BUTTONS[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]+1))){
                             if(buttonIndicators[i][0].get() != 0){  // kullanıcı tıkladıysa 0'lanmış olabilir.
                                 buttonIndicators[i][0].set(0);
                                 view.setButtonColor(i,0);
@@ -235,18 +247,19 @@ public class Presenter_Classic_Game {
                     }
                 }
                 else{
-                    if(score >= Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
-                        if(User_Preferences.getInstance().getMaxUnlockedClassicLevel() == Common_Parameters.CURRENT_CLASSIC_LEVEL){
-                            User_Preferences.getInstance().setMaxUnlockedClassicLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL+1);
+                    if(score >= Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
+                        if(User_Preferences.getInstance().getMaxUnlockedClassicLevel() == Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL){
+                            User_Preferences.getInstance().setMaxUnlockedClassicLevel(Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL+1);
                         }
                     }
-                    int lastBestLevel = Integer.parseInt(User_Preferences.getInstance().getClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL));
+                    int lastBestLevel = Integer.parseInt(User_Preferences.getInstance().getClassicBestLevel(Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL));
                     if(score > lastBestLevel){
                         isBest = true;
                         int lastBest = Integer.parseInt(User_Preferences.getInstance().getClassicBest());
                         int newBest = lastBest + score - lastBestLevel; // classic best'i bu level'daki artış kadar artırılıyor.
-                        User_Preferences.getInstance().setClassicBestLevel(Common_Parameters.CURRENT_CLASSIC_LEVEL, Integer.toString(score));
+                        User_Preferences.getInstance().setClassicBestLevel(Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL, Integer.toString(score));
                         User_Preferences.getInstance().setClassicBest(Integer.toString(newBest));
+                        Database_Manager.getInstance().updateUserScoreClassic(newBest);
                     }
                     else{
                         isBest = false;
@@ -279,39 +292,39 @@ public class Presenter_Classic_Game {
                         while(buttonIndicators[candidateCell][0].get() != 0){
                             candidateCell = random.nextInt(gameSize);
                         }
-                        randomColorIndicator = random.nextInt(Common_Parameters.CLASSIC_TOTAL_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+                        randomColorIndicator = random.nextInt(Common_Parameters_Variables.CLASSIC_TOTAL_LIMIT[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]);
                         while(!isYellowAllowed){
                             if(isAnyPressed.get()){
                                 isYellowAllowed = true;
                             }
-                            if(!(randomColorIndicator >= Common_Parameters.CLASSIC_GREEN_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]
-                                && randomColorIndicator < Common_Parameters.CLASSIC_YELLOW_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1])){
+                            if(!(randomColorIndicator >= Common_Parameters_Variables.CLASSIC_GREEN_LIMIT[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]
+                                && randomColorIndicator < Common_Parameters_Variables.CLASSIC_YELLOW_LIMIT[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1])){
                                 break;
                             }
-                            randomColorIndicator = random.nextInt(Common_Parameters.CLASSIC_TOTAL_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+                            randomColorIndicator = random.nextInt(Common_Parameters_Variables.CLASSIC_TOTAL_LIMIT[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]);
                         }
 
-                        if(randomColorIndicator < Common_Parameters.CLASSIC_GREEN_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                        if(randomColorIndicator < Common_Parameters_Variables.CLASSIC_GREEN_LIMIT[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
                             buttonIndicators[candidateCell][0].set(1);
                         }
-                        else if(randomColorIndicator < Common_Parameters.CLASSIC_YELLOW_LIMIT[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                        else if(randomColorIndicator < Common_Parameters_Variables.CLASSIC_YELLOW_LIMIT[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
                             buttonIndicators[candidateCell][0].set(2);
                         }
                         else{
                             buttonIndicators[candidateCell][0].set(3);
                         }
-                        if(buttonFireSequence.get() > Common_Parameters.CLASSIC_NUMBER_OF_FIRING_BUTTONS[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                        if(buttonFireSequence.get() > Common_Parameters_Variables.CLASSIC_NUMBER_OF_FIRING_BUTTONS[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
                             buttonFireSequence.set(0);
                         }
                         buttonIndicators[candidateCell][1].set(buttonFireSequence.get());
                         buttonFireSequence.set(buttonFireSequence.get() + 1);
 
                         try {
-                            Thread.sleep(Common_Parameters.CLASSIC_FIRE_INTERVAL[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+                            Thread.sleep(Common_Parameters_Variables.CLASSIC_FIRE_INTERVAL[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        remainingTime.set(remainingTime.get() - Common_Parameters.CLASSIC_FIRE_INTERVAL[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]);
+                        remainingTime.set(remainingTime.get() - Common_Parameters_Variables.CLASSIC_FIRE_INTERVAL[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]);
                     }
                     else{
                         synchronized (lock){
@@ -333,11 +346,11 @@ public class Presenter_Classic_Game {
                 while(remainingMillis.get() >= 0){
                     if(!isPaused) {
                         try {
-                            Thread.sleep(Common_Parameters.SENSITIVITY_TIME);
+                            Thread.sleep(Common_Parameters_Variables.SENSITIVITY_TIME);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        remainingMillis.set(remainingMillis.get()- Common_Parameters.SENSITIVITY_TIME);
+                        remainingMillis.set(remainingMillis.get()- Common_Parameters_Variables.SENSITIVITY_TIME);
                     }
                     else{
                         synchronized (lock){
@@ -357,11 +370,13 @@ public class Presenter_Classic_Game {
     }
 
     public void onBackPressed(){
+        isPlayActive = true;
+        isPaused = false;
+        isExitedOnPurpose = true;
         uiWorkerTime.cancel();
         uiWorkerButton.cancel();
         serviceGameLogic.shutdownNow();
         serviceTimeField.shutdownNow();
-
         view.openClassicMenu();
     }
 
@@ -374,7 +389,7 @@ public class Presenter_Classic_Game {
             score++;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + score);
-            if(score >= Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+            if(score >= Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
                 view.setScoreColorGreen();
             }
             if(isAudioEnabled){
@@ -390,7 +405,7 @@ public class Presenter_Classic_Game {
             if(isLastPressedGreen.get()){
                 score++;
                 view.setScore(baseScore + score);
-                if(score >= Common_Parameters.CLASSIC_TARGET[Common_Parameters.CURRENT_CLASSIC_LEVEL-1]){
+                if(score >= Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
                     view.setScoreColorGreen();
                 }
                 if(isAudioEnabled){
@@ -436,5 +451,9 @@ public class Presenter_Classic_Game {
     public void onEndGameDismissRequested(){
         view.dismissEndGame(isBest);
         view.openClassicMenu();
+        if(System.currentTimeMillis() - Common_Parameters_Variables.LAST_AD_TIME >= Common_Parameters_Variables.AD_TIME_INTERVAL){
+            Common_Parameters_Variables.LAST_AD_TIME = System.currentTimeMillis();
+            view.showInterstitialAd();
+        }
     }
 }

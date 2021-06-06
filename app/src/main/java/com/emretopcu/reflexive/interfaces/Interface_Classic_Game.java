@@ -4,6 +4,7 @@ public interface Interface_Classic_Game {
     void setFragment(int fragmentType);
     void setAudioEnabled();
     void setAudioDisabled();
+    void mute();
     void setBest(String best);
     void setTarget(String target);
     void setScore(String score);
@@ -25,4 +26,5 @@ public interface Interface_Classic_Game {
     void openEndGame(boolean isBest, int score);
     void dismissEndGame(boolean isBest);
     void openClassicMenu();
+    void showInterstitialAd();
 }

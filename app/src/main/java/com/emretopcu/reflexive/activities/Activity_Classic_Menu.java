@@ -23,6 +23,7 @@ public class Activity_Classic_Menu extends AppCompatActivity implements Interfac
     private RecyclerViewAdapter_Classic_Menu adapter;
     private RecyclerView recyclerView_classic_menu;
     private LinearLayoutManager layoutManager;
+
     private Presenter_Classic_Menu presenter;
 
     @Override
@@ -64,6 +65,12 @@ public class Activity_Classic_Menu extends AppCompatActivity implements Interfac
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onActivityPaused();
+    }
+
+    @Override
     public void onBackPressed() {
         presenter.onBackPressed();
     }
@@ -93,6 +100,13 @@ public class Activity_Classic_Menu extends AppCompatActivity implements Interfac
         }
         if(mediaPlayerGame.isPlaying()){
             mediaPlayerGame.pause();
+        }
+    }
+
+    @Override
+    public void mute() {
+        if(mediaPlayerIntro.isPlaying()){
+            mediaPlayerIntro.pause();
         }
     }
 

@@ -3,6 +3,7 @@ package com.emretopcu.reflexive.interfaces;
 public interface Interface_Main {
     void setAudioEnabled();
     void setAudioDisabled();
+    void mute();
     void openUsernameDialog(String username);
     void dismissUsernameDialog();
     void showWarningOnUsernameDialog();
@@ -15,4 +16,8 @@ public interface Interface_Main {
     void openSurvival();
     void openLeaderboard();
     void showDatabaseErrorToast();
+    void setArcadeButtonColor(int colorType);
+    void setSurvivalButtonColor(int colorType);
+    void showArcadeToast();
+    void showSurvivalToast();
 }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.emretopcu.reflexive.R;
-import com.emretopcu.reflexive.models.Common_Parameters;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
 import com.emretopcu.reflexive.models.Leaderboard_Info;
 
 public class RecyclerViewAdapter_Leaderboard extends RecyclerView.Adapter<ViewHolder_LB> {
@@ -72,7 +72,7 @@ public class RecyclerViewAdapter_Leaderboard extends RecyclerView.Adapter<ViewHo
 
     @Override
     public int getItemCount() {
-        return Common_Parameters.NUMBER_OF_LEADERBOARD_USERS;
+        return Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS;
     }
 
     @Override

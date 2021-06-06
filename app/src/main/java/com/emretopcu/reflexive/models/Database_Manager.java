@@ -1,7 +1,5 @@
 package com.emretopcu.reflexive.models;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.emretopcu.reflexive.presenters.Presenter_First_Entrance;
@@ -115,7 +113,7 @@ public class Database_Manager {
     }
 
     public void getLeaderboardInfo(){
-        dbRef.orderBy("classic_best", Query.Direction.DESCENDING).limit(Common_Parameters.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dbRef.orderBy("classic_best", Query.Direction.DESCENDING).limit(Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for(int i=0; i<task.getResult().size(); i++) {
@@ -126,7 +124,7 @@ public class Database_Manager {
                 }
             }
         });
-        dbRef.orderBy("arcade_best", Query.Direction.DESCENDING).limit(Common_Parameters.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dbRef.orderBy("arcade_best", Query.Direction.DESCENDING).limit(Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for(int i=0; i<task.getResult().size(); i++) {
@@ -137,7 +135,7 @@ public class Database_Manager {
                 }
             }
         });
-        dbRef.orderBy("survival_best", Query.Direction.DESCENDING).limit(Common_Parameters.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dbRef.orderBy("survival_best", Query.Direction.DESCENDING).limit(Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for(int i=0; i<task.getResult().size(); i++) {
@@ -150,6 +148,116 @@ public class Database_Manager {
         });
     }
 
+    public void requestLeaderboardInfo(Presenter_Main presenter){   // okuma bitince leaderboard kısmının açılması için, burada okuma bitince response veriliyor.
+        dbRef.orderBy("classic_best", Query.Direction.DESCENDING).limit(Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(int i=0; i<task.getResult().size(); i++) {
+                    Leaderboard_Info_Object_Type data = new Leaderboard_Info_Object_Type(
+                            task.getResult().getDocuments().get(i).getId(),
+                            Integer.parseInt(task.getResult().getDocuments().get(i).get("classic_best").toString()));
+                    Leaderboard_Info.getInstance().getClassicLeaderboard()[i] = data;
+                    presenter.onLeaderboardInfoResponded();
+                }
+            }
+        });
+        dbRef.orderBy("arcade_best", Query.Direction.DESCENDING).limit(Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(int i=0; i<task.getResult().size(); i++) {
+                    Leaderboard_Info_Object_Type data = new Leaderboard_Info_Object_Type(
+                            task.getResult().getDocuments().get(i).getId(),
+                            Integer.parseInt(task.getResult().getDocuments().get(i).get("arcade_best").toString()));
+                    Leaderboard_Info.getInstance().getArcadeLeaderboard()[i] = data;
+                    presenter.onLeaderboardInfoResponded();
+                }
+            }
+        });
+        dbRef.orderBy("survival_best", Query.Direction.DESCENDING).limit(Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(int i=0; i<task.getResult().size(); i++) {
+                    Leaderboard_Info_Object_Type data = new Leaderboard_Info_Object_Type(
+                            task.getResult().getDocuments().get(i).getId(),
+                            Integer.parseInt(task.getResult().getDocuments().get(i).get("survival_best").toString()));
+                    Leaderboard_Info.getInstance().getSurvivalLeaderboard()[i] = data;
+                    presenter.onLeaderboardInfoResponded();
+                }
+            }
+        });
+    }
+
+    public void updateUserScoreClassic(int bestScore){
+        dbRef.document(User_Info.getInstance().getUsername()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("classic_best", bestScore);
+                    data.put("arcade_best", User_Info.getInstance().getArcadeBest());
+                    data.put("survival_best", User_Info.getInstance().getSurvivalBest());
+                    dbRef.document(User_Info.getInstance().getUsername()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            User_Info.getInstance().setClassicBest(bestScore);
+                        }
+                    });
+
+                }
+            }
+        });
+        if(bestScore > Leaderboard_Info.getInstance().getClassicLeaderboard()[Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS-1].getBest()){
+            Common_Parameters_Variables.IS_NEW_LEADERBOARD_VISITED = false;     // liste degistigi icin guncelleme gerekli.
+        }
+    }
+
+    public void updateUserScoreArcade(int bestScore){
+        dbRef.document(User_Info.getInstance().getUsername()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("classic_best", User_Info.getInstance().getClassicBest());
+                    data.put("arcade_best", bestScore);
+                    data.put("survival_best", User_Info.getInstance().getSurvivalBest());
+                    dbRef.document(User_Info.getInstance().getUsername()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            User_Info.getInstance().setArcadeBest(bestScore);
+                        }
+                    });
+
+                }
+            }
+        });
+        if(bestScore > Leaderboard_Info.getInstance().getArcadeLeaderboard()[Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS-1].getBest()){
+            Common_Parameters_Variables.IS_NEW_LEADERBOARD_VISITED = false;     // liste degistigi icin guncelleme gerekli.
+        }
+    }
+
+    public void updateUserScoreSurvival(int bestScore){
+        dbRef.document(User_Info.getInstance().getUsername()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("classic_best", User_Info.getInstance().getClassicBest());
+                    data.put("arcade_best", User_Info.getInstance().getArcadeBest());
+                    data.put("survival_best", bestScore);
+                    dbRef.document(User_Info.getInstance().getUsername()).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            User_Info.getInstance().setSurvivalBest(bestScore);
+                        }
+                    });
+
+                }
+            }
+        });
+        if(bestScore > Leaderboard_Info.getInstance().getSurvivalLeaderboard()[Common_Parameters_Variables.NUMBER_OF_LEADERBOARD_USERS-1].getBest()){
+            Common_Parameters_Variables.IS_NEW_LEADERBOARD_VISITED = false;     // liste degistigi icin guncelleme gerekli.
+        }
+    }
 }
 
 

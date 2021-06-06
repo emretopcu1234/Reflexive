@@ -70,4 +70,6 @@
     <string name="end_game_without_best_score">SCORE:</string>
     <string name="end_game_without_best_ok">OK</string>
     <string name="main_toast_database_error">Could not be connected to database. Try again later.</string>
+    <string name="main_toast_arcade">Will be unlocked when Level 5 is passed.</string>
+    <string name="main_toast_survival">Will be unlocked when Level 11 is passed.</string>
 </resources>

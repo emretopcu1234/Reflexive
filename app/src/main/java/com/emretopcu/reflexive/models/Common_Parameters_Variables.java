@@ -1,25 +1,29 @@
 package com.emretopcu.reflexive.models;
 
-public class Common_Parameters {
+public class Common_Parameters_Variables {
     public static final int NUMBER_OF_CLASSIC_LEVELS = 20;
-    public static final int NUMBER_OF_ARCADE_LEVELS = 4;    // TODO degisecek.
-    public static final int NUMBER_OF_SURVIVAL_LEVELS = 4;  // TODO degisecek.
+    public static final int NUMBER_OF_ARCADE_LEVELS = 20;
+    public static final int NUMBER_OF_SURVIVAL_LEVELS = 20;
     public static final int NUMBER_OF_LEADERBOARD_USERS = 20;
     public static final int NUMBER_OF_SURVIVAL_CHANCES = 3;
+
+    public static final int ARCADE_UNLOCK_LEVEL = 6;
+    public static final int SURVIVAL_UNLOCK_LEVEL = 11;
+
+    public static final int AD_TIME_INTERVAL = 75000;  // ms
 
     public static final int SENSITIVITY_TIME = 100; // ms
     public static final int SENSITIVITY_UI = 50;    // ms
     public static final int COUNT_DOWN_LENGTH = 100000; // ms
 
-    public static int CURRENT_CLASSIC_LEVEL;
     public static final int[] CLASSIC_TARGET = {10,15,30,40,50,60,70,80,90,100,100,100,100,100,100,100,100,100,100,100};    // TODO düzenlenecek.
-    public static final int[] CLASSIC_TIME = {20,25,50,50,60,40,45,45,60,30,20,50,15,30,45,30,20,20,15,10};    // TODO düzenlenecek.
+    public static final int[] CLASSIC_TIME = {25,25,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};    // TODO düzenlenecek.
     public static final int[] CLASSIC_FRAGMENT_TYPE = {0,0,0,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2}; // 0->4x4, 1->5x5, 2->6x6  // TODO düzenlenecek.
-    public static final int[] CLASSIC_FIRE_INTERVAL = {500,400,125,100,75};    // ms  TODO devamı doldurulacak.
-    public static final int[] CLASSIC_NUMBER_OF_FIRING_BUTTONS = {5,4,5,5,6};   // TODO devamı doldurulacak.
-    public static final int[] CLASSIC_GREEN_LIMIT = {4,4,4,4};  // TODO devamı doldurulacak.
-    public static final int[] CLASSIC_YELLOW_LIMIT = {6,6,6,6}; // TODO devamı doldurulacak.
-    public static final int[] CLASSIC_TOTAL_LIMIT = {10,10,10,10};  // TODO devamı doldurulacak.
+    public static final int[] CLASSIC_FIRE_INTERVAL = {500,400,200,200,200,200,200,200,200,200,200,200,200,200,200};    // ms  TODO devamı doldurulacak.
+    public static final int[] CLASSIC_NUMBER_OF_FIRING_BUTTONS = {5,4,5,5,6,5,5,65,5,6,5,5,6};   // TODO devamı doldurulacak.
+    public static final int[] CLASSIC_GREEN_LIMIT = {4,4,4,4,4,4,4,4,4,4,4,4,4};  // TODO devamı doldurulacak.
+    public static final int[] CLASSIC_YELLOW_LIMIT = {6,6,6,6,6,6,6,6,6,6,6,6,6}; // TODO devamı doldurulacak.
+    public static final int[] CLASSIC_TOTAL_LIMIT = {10,10,10,10,10,10,10,10,10,10,10,10,10};  // TODO devamı doldurulacak.
 
 //    public static final int[] ARCADE_TARGET = {10,20,30,40};   // TODO düzenlenecek.
 //    public static final int[] ARCADE_TIME = {25,20,30,25};     // TODO düzenlenecek.
@@ -54,6 +58,16 @@ public class Common_Parameters {
 //    public static final int[] SURVIVAL_GREEN_LIMIT = {5,5,4,4,4,4};  // TODO devamı doldurulacak.
 //    public static final int[] SURVIVAL_YELLOW_LIMIT = {7,7,6,6,6,6}; // TODO devamı doldurulacak.
 //    public static final int[] SURVIVAL_TOTAL_LIMIT = {10,10,10,10,10,10};  // TODO devamı doldurulacak.
+
+
+    public static long LAST_AD_TIME;
+    public static int CURRENT_CLASSIC_LEVEL;
+    public static boolean IS_NEW_LEADERBOARD_VISITED;   // eger kullanıcı kendi rekorunu kırarsa ve bu rekor genel sıralamada da ilk 20'deyse
+    // kullanıcı leaderboard'a tıkladığında veritabanından bilgiler tekrar okunmalı. ama rekordan sonra kullanıcı leaderboard'a girdiyse,
+    // sonrasında 2.defa girmek isterse bir daha veritabanından okunmasına gerek yok.
+    // niye boyle bir degisken kullanmadan her rekorda veritabanından okuma yapmıyoruz?
+    // cunku kullanıcı leaderboard'u görmek istemiyorsa bosuna firebase okuma sayisini artırmamak icin
+
 
 }
 

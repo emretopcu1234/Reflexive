@@ -1,7 +1,6 @@
 package com.emretopcu.reflexive.activities;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,7 @@ import android.widget.Button;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.emretopcu.reflexive.R;
-import com.emretopcu.reflexive.models.Common_Parameters;
-import com.emretopcu.reflexive.presenters.Presenter_Classic_Menu;
+import com.emretopcu.reflexive.models.Common_Parameters_Variables;
 
 
 public class RecyclerViewAdapter_Classic_Menu extends RecyclerView.Adapter<ViewHolder_CM> {
@@ -60,7 +58,7 @@ public class RecyclerViewAdapter_Classic_Menu extends RecyclerView.Adapter<ViewH
 
     @Override
     public int getItemCount() {
-        return Common_Parameters.NUMBER_OF_CLASSIC_LEVELS;
+        return Common_Parameters_Variables.NUMBER_OF_CLASSIC_LEVELS;
     }
 
     @Override
