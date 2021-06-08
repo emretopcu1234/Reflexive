@@ -19,6 +19,7 @@ public class Presenter_Classic_Game {
 
     private Context context;
     private Interface_Classic_Game view;
+    private final String baseLevel;
     private final String baseBest;
     private final String baseTarget;
     private final String baseScore;
@@ -54,6 +55,7 @@ public class Presenter_Classic_Game {
     public Presenter_Classic_Game(Context context, Interface_Classic_Game view) {
         this.context = context;
         this.view = view;
+        baseLevel = context.getString(R.string.classic_game_level);
         baseBest = context.getString(R.string.classic_game_best);
         baseTarget = context.getString(R.string.classic_game_target);
         baseScore = context.getString(R.string.classic_game_score);
@@ -71,6 +73,7 @@ public class Presenter_Classic_Game {
             isPaused = false;
             view.setFragment(Common_Parameters_Variables.CLASSIC_FRAGMENT_TYPE[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL - 1]);
             view.setPause();
+            view.setLevel(baseLevel + Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL);
             view.setBest(baseBest + User_Preferences.getInstance().getClassicBestLevel(Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL));
             view.setTarget(baseTarget + Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL - 1]);
             view.setScoreColorDefault();

@@ -7,6 +7,7 @@
     <string name="main_survival">HAYATTA KALMA</string>
     <string name="main_leaderboard">EN İYİLER</string>
     <string name="rv_classic_menu_level">"SEVİYE "</string>
+    <string name="classic_game_level">"SEVİYE "</string>
     <string name="classic_game_score">"SKOR: "</string>
     <string name="arcade_game_score">"SKOR: "</string>
     <string name="survival_game_score">"SKOR: "</string>

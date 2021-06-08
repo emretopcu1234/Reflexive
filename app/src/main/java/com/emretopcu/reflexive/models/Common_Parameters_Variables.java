@@ -16,23 +16,15 @@ public class Common_Parameters_Variables {
     public static final int SENSITIVITY_UI = 50;    // ms
     public static final int COUNT_DOWN_LENGTH = 100000; // ms
 
-    public static final int[] CLASSIC_TARGET = {10,15,30,40,50,60,70,80,90,100,100,100,100,100,100,100,100,100,100,100};    // TODO düzenlenecek.
-    public static final int[] CLASSIC_TIME = {25,25,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};    // TODO düzenlenecek.
-    public static final int[] CLASSIC_FRAGMENT_TYPE = {0,0,0,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2}; // 0->4x4, 1->5x5, 2->6x6  // TODO düzenlenecek.
-    public static final int[] CLASSIC_FIRE_INTERVAL = {500,400,200,200,200,200,200,200,200,200,200,200,200,200,200};    // ms  TODO devamı doldurulacak.
-    public static final int[] CLASSIC_NUMBER_OF_FIRING_BUTTONS = {5,4,5,5,6,5,5,65,5,6,5,5,6};   // TODO devamı doldurulacak.
-    public static final int[] CLASSIC_GREEN_LIMIT = {4,4,4,4,4,4,4,4,4,4,4,4,4};  // TODO devamı doldurulacak.
-    public static final int[] CLASSIC_YELLOW_LIMIT = {6,6,6,6,6,6,6,6,6,6,6,6,6}; // TODO devamı doldurulacak.
-    public static final int[] CLASSIC_TOTAL_LIMIT = {10,10,10,10,10,10,10,10,10,10,10,10,10};  // TODO devamı doldurulacak.
+    public static final int[] CLASSIC_TARGET = {10,25,30,30,10,40,45,50,50,25,50,50,55,55,60,60,65,70,60,100};
+    public static final int[] CLASSIC_TIME = {15,20,20,20,10,30,30,35,35,15,30,30,40,40,40,40,40,40,30,45};
+    public static final int[] CLASSIC_FRAGMENT_TYPE = {0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2}; // 0->4x4, 1->5x5, 2->6x6
+    public static final int[] CLASSIC_FIRE_INTERVAL = {600,550,500,465,450,450,400,400,350,350,400,375,350,325,300,300,300,300,300,300};    // ms
+    public static final int[] CLASSIC_NUMBER_OF_FIRING_BUTTONS = {4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6};
+    public static final int[] CLASSIC_GREEN_LIMIT = {5,5,5,5,5,5,5,5,5,4,5,5,5,5,4,4,4,4,4,5};
+    public static final int[] CLASSIC_YELLOW_LIMIT = {8,8,8,7,7,7,7,7,7,6,7,7,7,6,6,5,6,6,6,7};
+    public static final int[] CLASSIC_TOTAL_LIMIT = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
 
-//    public static final int[] ARCADE_TARGET = {10,20,30,40};   // TODO düzenlenecek.
-//    public static final int[] ARCADE_TIME = {25,20,30,25};     // TODO düzenlenecek.
-//    public static final int[] ARCADE_FRAGMENT_TYPE = {1,0,1,2};    // TODO düzenlenecek.
-//    public static final int[] ARCADE_FIRE_INTERVAL = {400,300,250,200};    // ms  TODO devamı doldurulacak.
-//    public static final int[] ARCADE_NUMBER_OF_FIRING_BUTTONS = {6,5,4,5};   // TODO devamı doldurulacak.
-//    public static final int[] ARCADE_GREEN_LIMIT = {5,5,4,4};  // TODO devamı doldurulacak.
-//    public static final int[] ARCADE_YELLOW_LIMIT = {7,7,6,6}; // TODO devamı doldurulacak.
-//    public static final int[] ARCADE_TOTAL_LIMIT = {10,10,10,10};  // TODO devamı doldurulacak.
 
     public static final int[] ARCADE_TARGET = {10,20,30,40,50,60,60,60,60,60,60,60,60,60,70,70,70,80,80,90};   // TODO düzenlenecek.
     public static final int[] ARCADE_TIME = {25,20,30,25,15,10,15,10,15,10,15,10,15,10,15,10,15,10,15,10};     // TODO düzenlenecek.
@@ -42,6 +34,7 @@ public class Common_Parameters_Variables {
     public static final int[] ARCADE_GREEN_LIMIT = {5,5,4,4,4,4};  // TODO devamı doldurulacak.
     public static final int[] ARCADE_YELLOW_LIMIT = {7,7,6,6,6,6}; // TODO devamı doldurulacak.
     public static final int[] ARCADE_TOTAL_LIMIT = {10,10,10,10,10,10};  // TODO devamı doldurulacak.
+
 
     public static final int[] SURVIVAL_TIME = {25,20,30,25};     // TODO düzenlenecek.
     public static final int[] SURVIVAL_FRAGMENT_TYPE = {0,0,1,2};  // TODO devamı doldurulacak.

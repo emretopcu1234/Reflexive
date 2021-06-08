@@ -49,6 +49,7 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
     private Button buttonQuestion;
     private Button buttonAudioEnabled;
     private Button buttonAudioDisabled;
+    private TextView textViewLevel;
     private TextView textViewBest;
     private TextView textViewTarget;
     private TextView textViewScore;
@@ -103,6 +104,7 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
         buttonAudioEnabled = findViewById(R.id.button_classic_game_audio_on);
         buttonAudioDisabled = findViewById(R.id.button_classic_game_audio_off);
 
+        textViewLevel = findViewById(R.id.textView_classic_game_level);
         textViewBest = findViewById(R.id.textView_classic_game_best);
         textViewTarget = findViewById(R.id.textView_classic_game_target);
         textViewScore = findViewById(R.id.textView_classic_game_score);
@@ -295,6 +297,11 @@ public class Activity_Classic_Game extends AppCompatActivity implements Interfac
         if(mediaPlayerGame.isPlaying()){
             mediaPlayerGame.pause();
         }
+    }
+
+    @Override
+    public void setLevel(String level) {
+        textViewLevel.setText(level);
     }
 
     @Override

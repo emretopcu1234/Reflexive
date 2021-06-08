@@ -5,6 +5,7 @@ public interface Interface_Classic_Game {
     void setAudioEnabled();
     void setAudioDisabled();
     void mute();
+    void setLevel(String level);
     void setBest(String best);
     void setTarget(String target);
     void setScore(String score);
