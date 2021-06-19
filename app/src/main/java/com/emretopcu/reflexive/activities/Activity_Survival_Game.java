@@ -226,7 +226,7 @@ public class Activity_Survival_Game extends AppCompatActivity implements Interfa
                     return null;
                 }
             };
-            interstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequestInterstitial, new InterstitialAdLoadCallback() {
+            interstitialAd.load(this, "ca-app-pub-6308768432168130/6564008693", adRequestInterstitial, new InterstitialAdLoadCallback() {
                 @Override
                 public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                     Activity_Survival_Game.this.interstitialAd = interstitialAd;

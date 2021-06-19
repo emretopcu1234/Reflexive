@@ -14,23 +14,10 @@ import com.emretopcu.reflexive.models.User_Preferences;
 import com.google.android.gms.ads.MobileAds;
 
 public class Activity_Initial extends AppCompatActivity {
+    
+    // TODO uygulamayı playstore'a yükleyince admob'da bunu belirt.
 
-    // TODO logo ekle.
-
-    // TODO ad'lere tıklanırsa, kapatılırsa, uygulamadan çıkılırsa... case'lerini test ederken dene.
-
-    // TODO uygulamayı playstore'a yükleyince admob'da bunu belirt. ayrıca adunitid'lerini gerçek id'ler yap.
-
-    // TODO admob hesabına gerekli bilgileri ekle, böylece hesabın aktive olsun.
-
-    // TODO https://firebase.google.com/docs/admob/android/quick-start step 1: 2.a ve 2.b
-
-    // TODO commonparameters'taki değerleri düzenle.
-
-    // TODO firebase'deki leaderboardu duzenle.
-
-
-
+    
     public static MediaPlayer mediaPlayerIntro;
     public static MediaPlayer mediaPlayerGame;
     public static MediaPlayer mediaPlayerRight_0;

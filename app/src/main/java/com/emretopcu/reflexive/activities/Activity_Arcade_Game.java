@@ -222,7 +222,7 @@ public class Activity_Arcade_Game extends AppCompatActivity implements Interface
                     return null;
                 }
             };
-            interstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequestInterstitial, new InterstitialAdLoadCallback() {
+            interstitialAd.load(this, "ca-app-pub-6308768432168130/2816335373", adRequestInterstitial, new InterstitialAdLoadCallback() {
                 @Override
                 public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                     Activity_Arcade_Game.this.interstitialAd = interstitialAd;

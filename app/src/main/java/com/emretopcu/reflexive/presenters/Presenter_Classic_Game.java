@@ -389,7 +389,7 @@ public class Presenter_Classic_Game {
             if(!isAnyPressed.get()){
                 isAnyPressed.set(true);
             }
-            score++;
+            score += Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + score);
             if(score >= Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
@@ -406,7 +406,7 @@ public class Presenter_Classic_Game {
         else if(buttonIndicators[buttonIndex][0].get() == 2){
             buttonIndicators[buttonIndex][0].set(0);
             if(isLastPressedGreen.get()){
-                score++;
+                score += Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL;
                 view.setScore(baseScore + score);
                 if(score >= Common_Parameters_Variables.CLASSIC_TARGET[Common_Parameters_Variables.CURRENT_CLASSIC_LEVEL-1]){
                     view.setScoreColorGreen();

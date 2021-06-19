@@ -53,6 +53,7 @@ public class Database_Manager {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         User_Info.getInstance().setUsername(newUsername);
                                         presenter.onUsernameEditResponded(true, newUsername);
+                                        Common_Parameters_Variables.IS_NEW_LEADERBOARD_VISITED = false;
 
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {

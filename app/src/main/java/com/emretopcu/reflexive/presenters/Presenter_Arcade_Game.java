@@ -509,7 +509,7 @@ public class Presenter_Arcade_Game {
             if(!isAnyPressed.get()){
                 isAnyPressed.set(true);
             }
-            score++;
+            score += gameDifficultyIndex+1;
             isLastPressedGreen.set(true);
             view.setScore(baseScore + score);
             if(score >= Common_Parameters_Variables.ARCADE_TARGET[gameDifficultyIndex] && !isLastLevelStarted){
@@ -526,7 +526,7 @@ public class Presenter_Arcade_Game {
         else if(buttonIndicators[buttonIndex][0].get() == 2){
             buttonIndicators[buttonIndex][0].set(0);
             if(isLastPressedGreen.get()){
-                score++;
+                score += gameDifficultyIndex+1;
                 view.setScore(baseScore + score);
                 if(score >= Common_Parameters_Variables.ARCADE_TARGET[gameDifficultyIndex] && !isLastLevelStarted){
                     view.setScoreColorGreen();
