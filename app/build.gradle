@@ -30,9 +30,7 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             def appName = "Reflexive"
-            def date = new Date()
-            def formattedDate = date.format('dd-MMM-yyyy')
-            outputFileName = appName + "_" + formattedDate + "_1.0.apk"
+            outputFileName = appName + "_1.0.apk"
         }
     }
 }
